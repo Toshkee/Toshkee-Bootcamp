@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "check": "tsx scripts/check-content.ts",
-    "predev": "node scripts/copy-react-types.mjs",
-    "prebuild": "node scripts/copy-react-types.mjs"
+    "predev": "node scripts/copy-monaco-types.mjs",
+    "prebuild": "node scripts/copy-monaco-types.mjs"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
@@ -21,6 +21,7 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.18.4",
     "remark-gfm": "^4.0.1",
     "server-only": "^0.0.1",
     "shiki": "^4.5.0",

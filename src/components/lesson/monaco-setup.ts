@@ -7,26 +7,28 @@ import type { RunResult } from "@/lib/runner/harness";
 let configured = false;
 let reactTypes: Promise<void> = Promise.resolve();
 
-/** React tipovi (kopirani u public/ skriptom scripts/copy-react-types.mjs) za autocomplete i proveru u .tsx vežbama. */
-function loadReactTypes(monaco: Monaco) {
-  const files: [string, string][] = [
-    ["/monaco-types/react/index.d.ts", "file:///node_modules/@types/react/index.d.ts"],
-    ["/monaco-types/react/global.d.ts", "file:///node_modules/@types/react/global.d.ts"],
-    ["/monaco-types/react/jsx-runtime.d.ts", "file:///node_modules/@types/react/jsx-runtime.d.ts"],
-    ["/monaco-types/csstype/index.d.ts", "file:///node_modules/csstype/index.d.ts"],
-  ];
-  return Promise.all(
+/**
+ * Tipovi biblioteka (React, Zustand, React Router) za autocomplete i proveru u .tsx vežbama.
+ * Kopira ih scripts/copy-monaco-types.mjs u public/monaco-types, zajedno sa manifest.json.
+ */
+async function loadLibraryTypes(monaco: Monaco) {
+  const res = await fetch("/monaco-types/manifest.json");
+  if (!res.ok) return;
+  const files = (await res.json()) as [string, string][];
+  await Promise.all(
     files.map(async ([url, path]) => {
-      const res = await fetch(url);
-      if (res.ok) monaco.typescript.typescriptDefaults.addExtraLib(await res.text(), path);
+      const file = await fetch(url);
+      if (file.ok) monaco.typescript.typescriptDefaults.addExtraLib(await file.text(), path);
     }),
-  ).then(() => undefined);
+  );
 }
 
 /** Jednom po stranici: TypeScript podešavanja (ista kao u scripts/check-content.ts) i teme. */
 export function configureMonaco(monaco: Monaco) {
   if (configured) return;
   configured = true;
+  // Samo u dev režimu: pristup editoru iz konzole, za proveru vežbi
+  if (process.env.NODE_ENV !== "production") (window as unknown as { __monaco: Monaco }).__monaco = monaco;
 
   const ts = monaco.typescript;
   const options = {
@@ -46,7 +48,7 @@ export function configureMonaco(monaco: Monaco) {
     allowSyntheticDefaultImports: true,
     esModuleInterop: true,
   });
-  reactTypes = loadReactTypes(monaco).catch(() => undefined);
+  reactTypes = loadLibraryTypes(monaco).catch(() => undefined);
   ts.javascriptDefaults.setCompilerOptions({ ...options, allowJs: true, checkJs: false });
   ts.typescriptDefaults.setEagerModelSync(true);
   ts.javascriptDefaults.setEagerModelSync(true);

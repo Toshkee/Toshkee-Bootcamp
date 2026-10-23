@@ -3,6 +3,7 @@ import { projectInfo } from "@/content/curriculum";
 import type { Block, Lesson } from "@/content/types";
 import { highlightToHtml, highlightToTokens } from "@/lib/highlight";
 import { editorHref } from "@/lib/projects";
+import { stableOrder } from "@/lib/shuffle";
 import { slugify } from "@/lib/slug";
 import { CodeWalkthrough } from "./code-walkthrough";
 import { Exercise } from "./exercise";
@@ -98,6 +99,7 @@ export async function LessonBlocks({ lesson }: { lesson: Lesson }) {
               title={block.title}
               lang={block.lang}
               previewName={block.preview}
+              tailwind={block.tailwind}
               starter={block.starter}
               solution={block.solution}
               solutionHtml={await highlightToHtml(block.solution, block.lang)}
@@ -121,6 +123,7 @@ export async function LessonBlocks({ lesson }: { lesson: Lesson }) {
               title={block.title}
               lang={block.lang}
               previewName={block.preview}
+              tailwind={block.tailwind}
               starter={block.code}
               solution=""
               solutionHtml=""
@@ -136,13 +139,17 @@ export async function LessonBlocks({ lesson }: { lesson: Lesson }) {
               id={block.id}
               title={block.title}
               questions={await Promise.all(
-                block.questions.map(async (q) => ({
-                  q: <MdInline>{q.q}</MdInline>,
-                  codeHtml: q.code ? await highlightToHtml(q.code, q.codeLang ?? "ts") : undefined,
-                  options: q.options.map((o, j) => <MdInline key={j}>{o}</MdInline>),
-                  answer: q.answer,
-                  why: <MdInline>{q.why}</MdInline>,
-                })),
+                block.questions.map(async (q, qi) => {
+                  // Opcije se mešaju (uvek istim redom), da tačan odgovor ne bi stajao uvek na istom mestu
+                  const order = stableOrder(q.options.length, `${block.id}:${qi}`);
+                  return {
+                    q: <MdInline>{q.q}</MdInline>,
+                    codeHtml: q.code ? await highlightToHtml(q.code, q.codeLang ?? "ts") : undefined,
+                    options: order.map((j) => <MdInline key={j}>{q.options[j]}</MdInline>),
+                    answer: order.indexOf(q.answer),
+                    why: <MdInline>{q.why}</MdInline>,
+                  };
+                }),
               )}
             />
           );

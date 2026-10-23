@@ -83,19 +83,29 @@ function compile(code: string, lang: "ts" | "js" | "tsx") {
 let reactEnv: Promise<ReactEnv> | undefined;
 const getReactEnv = () =>
   (reactEnv ??= (async () => {
-    const dom = new JSDOM("<!doctype html><html><body></body></html>", { pretendToBeVisual: true });
+    // url je potreban da bi localStorage radio (Zustand persist)
+    const dom = new JSDOM("<!doctype html><html><body></body></html>", { pretendToBeVisual: true, url: "http://localhost/" });
     const g = globalThis as Record<string, unknown>;
     g.window = dom.window;
     g.document = dom.window.document;
     const React = await import("react");
     const jsxRuntime = await import("react/jsx-runtime");
     const { createRoot } = await import("react-dom/client");
+    const zustand = await import("zustand");
+    const zustandMiddleware = await import("zustand/middleware");
+    const reactRouterDom = await import("react-router-dom");
     return {
       React,
       jsxRuntime,
       createRoot: createRoot as ReactEnv["createRoot"],
       doc: dom.window.document,
       win: dom.window as unknown as ReactEnv["win"],
+      modules: {
+        zustand,
+        "zustand/middleware": zustandMiddleware,
+        "react-router-dom": reactRouterDom,
+        "react-router": reactRouterDom,
+      },
     };
   })());
 

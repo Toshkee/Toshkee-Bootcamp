@@ -14,6 +14,28 @@ export interface ReactEnv {
   createRoot: (el: Element, options?: any) => { render(node: unknown): void; unmount(): void };
   doc: Document;
   win: Window & typeof globalThis;
+  /** Ostale biblioteke dostupne u vežbama: "zustand", "zustand/middleware", "react-router-dom"… */
+  modules?: Record<string, unknown>;
+}
+
+type ZustandStore = { setState(state: unknown, replace?: boolean): void; getInitialState(): unknown };
+
+/**
+ * localStorage za vežbe, u memoriji. Vežbe NE smeju da diraju pravi localStorage:
+ * tamo bootcamp čuva tvoj napredak (iframe sa pregledom deli isti origin sa aplikacijom).
+ */
+export function createMemoryStorage(): Storage {
+  const data = new Map<string, string>();
+  return {
+    get length() {
+      return data.size;
+    },
+    key: (i: number) => [...data.keys()][i] ?? null,
+    getItem: (k: string) => (data.has(k) ? data.get(k)! : null),
+    setItem: (k: string, v: string) => void data.set(k, String(v)),
+    removeItem: (k: string) => void data.delete(k),
+    clear: () => data.clear(),
+  };
 }
 
 const namedToDestructure = (named: string) =>
@@ -45,14 +67,40 @@ export function rewriteModules(js: string): string {
     .replace(/^\s*export\s*\{[^}]*\};?[ \t]*$/gm, "");
 }
 
-function makeRequire(env: ReactEnv) {
+/**
+ * `import` u vežbama. Zustand-ov `create` pratimo, da bi se svaki store vratio na početno
+ * stanje između testova (inače bi test 2 video stanje koje je ostavio test 1).
+ */
+function makeRequire(env: ReactEnv, storage: Storage, stores: ZustandStore[] = []) {
   const modules: Record<string, unknown> = {
     react: env.React,
     "react/jsx-runtime": env.jsxRuntime,
     "react-dom/client": { createRoot: env.createRoot },
+    ...env.modules,
   };
+  const zustand = modules.zustand as { create: (init?: unknown) => unknown } | undefined;
+  if (zustand) {
+    const track = (store: unknown) => {
+      stores.push(store as ZustandStore);
+      return store;
+    };
+    const create = (init?: unknown) =>
+      init === undefined ? (fn: unknown) => track(zustand.create(fn)) : track(zustand.create(init));
+    modules.zustand = { ...zustand, create };
+  }
+  // persist podrazumevano piše u localStorage; u vežbama ga preusmeravamo na storage iz memorije
+  const middleware = modules["zustand/middleware"] as
+    | { persist: (fn: unknown, options: object) => unknown; createJSONStorage: (get: () => Storage) => unknown }
+    | undefined;
+  if (middleware) {
+    const persist = (fn: unknown, options: object) =>
+      middleware.persist(fn, { storage: middleware.createJSONStorage(() => storage), ...options });
+    modules["zustand/middleware"] = { ...middleware, persist };
+  }
   return (name: string) => {
-    if (!(name in modules)) throw new Error(`U vežbama je dostupan samo "react", a ne "${name}"`);
+    if (!(name in modules)) {
+      throw new Error(`"${name}" nije dostupan u vežbama. Može: ${Object.keys(modules).filter((m) => !m.includes("/client") && !m.includes("jsx-runtime")).join(", ")}`);
+    }
     return modules[name];
   };
 }
@@ -82,7 +130,7 @@ const ROLES: Record<string, string> = {
 };
 
 /** Upiti i akcije koje testovi koriste, po uzoru na React Testing Library. */
-function createDom(env: ReactEnv, logs: LogLine[]) {
+function createDom(env: ReactEnv, logs: LogLine[], storage: Storage, stores: ZustandStore[] = []) {
   const { React, createRoot, doc, win } = env;
   let mounted: { root: ReturnType<ReactEnv["createRoot"]>; el: HTMLElement }[] = [];
   let container: HTMLElement = doc.body;
@@ -244,6 +292,8 @@ function createDom(env: ReactEnv, logs: LogLine[]) {
       container = doc.body;
       renderError = undefined;
       eventError = undefined;
+      for (const store of stores) store.setState(store.getInitialState(), true);
+      storage.clear();
       await tick(1);
     },
     dispose() {
@@ -256,7 +306,9 @@ function createDom(env: ReactEnv, logs: LogLine[]) {
 /** Pokreće React vežbu i testove. `js` je već kompajliran (TSX → JS). */
 export async function runReactProgram(env: ReactEnv, js: string, tests: ExerciseTest[]): Promise<RunResult> {
   const logs: LogLine[] = [];
-  const dom = createDom(env, logs);
+  const stores: ZustandStore[] = [];
+  const storage = createMemoryStorage();
+  const dom = createDom(env, logs, storage, stores);
   const registrations = tests
     .map((t) => `__test(${JSON.stringify(t.name)}, async () => {\n${t.code}\n});`)
     .join("\n");
@@ -288,8 +340,13 @@ return { logs: __logs, tests: __results, runtimeError: __runtimeError };
 })();`;
 
   try {
-    const fn = new Function("__require", "__dom", body) as (req: unknown, dom: unknown) => Promise<RunResult>;
-    const result = await fn(makeRequire(env), dom);
+    const fn = new Function("__require", "__dom", "localStorage", "sessionStorage", body) as (
+      req: unknown,
+      dom: unknown,
+      local: Storage,
+      session: Storage,
+    ) => Promise<RunResult>;
+    const result = await fn(makeRequire(env, storage, stores), dom, storage, createMemoryStorage());
     return { ...result, logs: [...result.logs, ...logs] };
   } catch (e) {
     return { logs, tests: [], runtimeError: e instanceof Error ? `${e.name}: ${e.message}` : String(e) };
@@ -304,14 +361,20 @@ export function evaluateComponent(
   env: ReactEnv,
   js: string,
   name: string,
+  /** Pregled čuva svoj storage između osvežavanja, pa persist može da se vidi na delu. */
+  storage: Storage = createMemoryStorage(),
 ): { component?: unknown; logs: LogLine[]; error?: string } {
   const body = `${PRELUDE}
 ${rewriteModules(js)}
 ;
 return { component: typeof ${name} === "function" ? ${name} : undefined, logs: __logs };`;
   try {
-    const fn = new Function("__require", body) as (req: unknown) => { component?: unknown; logs: LogLine[] };
-    const out = fn(makeRequire(env));
+    const fn = new Function("__require", "localStorage", "sessionStorage", body) as (
+      req: unknown,
+      local: Storage,
+      session: Storage,
+    ) => { component?: unknown; logs: LogLine[] };
+    const out = fn(makeRequire(env, storage), storage, createMemoryStorage());
     if (!out.component) return { logs: out.logs, error: `Nema komponente "${name}". Napiši function ${name}() { … }` };
     return out;
   } catch (e) {

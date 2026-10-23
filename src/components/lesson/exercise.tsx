@@ -41,6 +41,7 @@ export function Exercise({
   title,
   mode = "exercise",
   previewName = "App",
+  tailwind = false,
   lang,
   starter,
   solution,
@@ -57,6 +58,7 @@ export function Exercise({
   /** "playground" = peskovnik: samo editor i živi pregled, bez testova i rešenja. */
   mode?: "exercise" | "playground";
   previewName?: string;
+  tailwind?: boolean;
   lang: "ts" | "js" | "tsx";
   starter: string;
   solution: string;
@@ -323,7 +325,7 @@ export function Exercise({
             <span className="font-medium tracking-wide uppercase">Pregled</span>
             <span>osvežava se dok kucaš</span>
           </div>
-          <ReactPreview js={previewJs} name={previewName} onLogs={setPreviewLogs} />
+          <ReactPreview js={previewJs} name={previewName} tailwind={tailwind} onLogs={setPreviewLogs} />
         </div>
       )}
 

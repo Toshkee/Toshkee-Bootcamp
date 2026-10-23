@@ -77,8 +77,13 @@ export interface ExerciseTest {
    * U "tsx" vežbama još i: `await render(App, props?)`, `screen.getByText / getAllByText / queryByText /
    * getByRole(role, { name }) / getAllByRole / queryByRole / getByLabelText / getByPlaceholderText / getByTestId`,
    * `await click(el)`, `await type(el, "tekst")`, `await select(el, "vrednost")`, `await tick()`, `await sleep(ms)`,
-   * i matcher-i toBeInTheDocument / toHaveTextContent / toHaveValue / toBeChecked / toBeDisabled.
-   * Posle svakog testa sve se demontira, pa svaki test počinje sa render(...).
+   * i matcher-i toBeInTheDocument / toHaveTextContent / toHaveValue / toBeChecked / toBeDisabled /
+   * toHaveClass("rounded-lg", /^p[xy]?-\d+$/) (string = tačna klasa, RegExp = bilo koja klasa koja odgovara).
+   * Posle svakog testa sve se demontira, Zustand store-ovi se vraćaju na početno stanje i localStorage se briše,
+   * pa svaki test počinje sa render(...).
+   *
+   * U "tsx" vežbama mogu da se importuju: "react", "zustand", "zustand/middleware" i "react-router-dom"
+   * (u vežbama koristi MemoryRouter, ne BrowserRouter).
    */
   code: string;
 }
@@ -93,6 +98,8 @@ export interface ExerciseBlock {
   lang: "ts" | "js" | "tsx";
   /** Samo za "tsx": koja komponenta se prikazuje u pregledu. Default: "App". */
   preview?: string;
+  /** Samo za "tsx": pregled učitava Tailwind (klase rade kao u tvojim projektima). */
+  tailwind?: boolean;
   starter: string;
   solution: string;
   /** Ako je true, vežba prolazi samo ako TypeScript ne prijavljuje nijednu grešku. Default: true za "ts". */
@@ -113,6 +120,8 @@ export interface PlaygroundBlock {
   code: string;
   /** Koja komponenta se prikazuje. Default: "App". */
   preview?: string;
+  /** Pregled učitava Tailwind. */
+  tailwind?: boolean;
 }
 
 export interface QuizQuestion {

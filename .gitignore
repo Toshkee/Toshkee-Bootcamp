@@ -40,5 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# generisano iz node_modules (scripts/copy-react-types.mjs)
+# generisano iz node_modules (scripts/copy-monaco-types.mjs)
 /public/monaco-types

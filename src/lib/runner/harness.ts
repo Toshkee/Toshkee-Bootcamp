@@ -44,6 +44,7 @@ const __fmt = (v, depth = 0) => {
     const t = (v.textContent || "").replace(/\s+/g, " ").trim();
     return "<" + v.tagName.toLowerCase() + ">" + (t ? " \"" + (t.length > 60 ? t.slice(0, 60) + "…" : t) + "\"" : "");
   }
+  if (v instanceof RegExp) return String(v);
   if (v instanceof Error) return v.name + ": " + v.message;
   if (v instanceof Date) return "Date(" + (isNaN(v.getTime()) ? "Invalid Date" : v.toISOString()) + ")";
   if (v instanceof Map) return "Map(" + v.size + ") {" + [...v].map(([k, x]) => __fmt(k, depth + 1) + " => " + __fmt(x, depth + 1)).join(", ") + "}";
@@ -105,6 +106,14 @@ function expect(actual) {
     },
     toHaveValue(v) { if (!actual || String(actual.value) !== String(v)) fail("Očekivana vrednost " + __show(v) + ", a polje ima " + (actual ? JSON.stringify(actual.value) : __show(actual))); },
     toBeChecked() { if (!actual || !actual.checked) fail("Očekivano je da bude štiklirano, ali nije"); },
+    toHaveClass(...classes) {
+      if (!actual || !actual.classList) fail("toHaveClass očekuje element, a dobijeno " + __show(actual));
+      const list = [...actual.classList];
+      for (const c of classes) {
+        const ok = c instanceof RegExp ? list.some((x) => c.test(x)) : list.includes(c);
+        if (!ok) fail("Očekivana klasa " + (c instanceof RegExp ? String(c) : JSON.stringify(c)) + ", a element ima: " + (list.join(" ") || "(nijednu)"));
+      }
+    },
     toBeDisabled() { if (!actual || !actual.disabled) fail("Očekivano je da bude onemogućeno (disabled), ali nije"); },
     toThrow(fragment) {
       if (typeof actual !== "function") fail("toThrow očekuje funkciju, npr. expect(() => nesto()).toThrow()");

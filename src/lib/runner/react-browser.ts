@@ -3,6 +3,9 @@
 import * as React from "react";
 import * as jsxRuntime from "react/jsx-runtime";
 import { createRoot } from "react-dom/client";
+import * as ReactRouterDom from "react-router-dom";
+import * as zustand from "zustand";
+import * as zustandMiddleware from "zustand/middleware";
 import type { ExerciseTest } from "@/content/types";
 import type { RunResult } from "./harness";
 import { runReactProgram, type ReactEnv } from "./react-harness";
@@ -34,12 +37,28 @@ form { display: flex; flex-direction: column; gap: .6em; align-items: flex-start
 .error { color: #ef4444; }
 `;
 
+/** Tailwind u pregledu: zvanični browser build kompajlira klase dok se crtaju. */
+export const TAILWIND_SCRIPT = "https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.3/dist/index.global.js";
+
+/** Stil za Tailwind pregled; sama skripta se dodaje posle (vidi ReactPreview), da ne blokira iframe. */
+export const TAILWIND_HEAD = `<style type="text/tailwindcss">@custom-variant dark (&:where(.dark, .dark *));</style>
+<style>
+html, body { margin: 0; background: #ffffff; color: #0a0a0b; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
+#root { padding: 20px; }
+</style>`;
+
 export const browserReactEnv = (doc: Document, win: Window): ReactEnv => ({
   React,
   jsxRuntime,
   createRoot: createRoot as ReactEnv["createRoot"],
   doc,
   win: win as ReactEnv["win"],
+  modules: {
+    zustand,
+    "zustand/middleware": zustandMiddleware,
+    "react-router-dom": ReactRouterDom,
+    "react-router": ReactRouterDom,
+  },
 });
 
 /** Testovi se izvršavaju u skrivenom iframe-u, da ne diraju pregled ni ostatak stranice. */

@@ -3,20 +3,11 @@ import osnove from "./modules/00-osnove";
 import javascript from "./modules/01-javascript";
 import typescript from "./modules/02-typescript";
 import react from "./modules/03-react";
+import stilIStanje from "./modules/04-stil-i-stanje";
 
-export const modules: Module[] = [osnove, javascript, typescript, react];
+export const modules: Module[] = [osnove, javascript, typescript, react, stilIStanje];
 
 export const upcoming: UpcomingModule[] = [
-  {
-    slug: "stil-i-stanje",
-    index: 4,
-    title: "Stil i stanje",
-    tagline: "Tailwind CSS, Zustand i rutiranje",
-    icon: "palette",
-    hue: "#f472b6",
-    projects: ["ReformStudio", "PlazaHome", "Pasted"],
-    topics: ["Tailwind klase", "Responsive dizajn", "Zustand store", "react-router-dom"],
-  },
   {
     slug: "nextjs",
     index: 5,
