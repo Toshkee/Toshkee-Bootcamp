@@ -10,7 +10,7 @@ const lesson: Lesson = {
   blocks: [
     {
       kind: "prose",
-      md: `U prošloj lekciji \`ls -la\` je u ReformStudiju pokazao skriven folder \`.git\`. U njemu živi **cela istorija projekta**: svaka verzija svakog fajla, od prvog dana.
+      md: `U lekciji o terminalu \`ls -la\` je u ReformStudiju pokazao skriven folder \`.git\`. U njemu živi **cela istorija projekta**: svaka verzija svakog fajla, od prvog dana.
 
 **Git** je program koji tu istoriju vodi. Kad kažeš "zapamti ovo stanje", git napravi **commit**: snimak celog projekta u tom trenutku, sa porukom šta je promenjeno, ko je to uradio i kada. ReformStudio trenutno ima 56 takvih snimaka.
 
@@ -97,7 +97,7 @@ nothing added to commit but untracked files present (use "git add" to track)`,
         },
         {
           task: "Pogledaj istoriju, jedan commit po redu.",
-          accept: ["git\\s+log(\\s+--oneline)?"],
+          accept: ["git\\s+log\\s+--oneline"],
           output: "a1c3f0e (HEAD -> main) prve beleske",
           hint: "`git log --oneline`",
         },
@@ -107,7 +107,7 @@ nothing added to commit but untracked files present (use "git add" to track)`,
       kind: "callout",
       tone: "info",
       title: "main ili master?",
-      md: `Glavna grana se zove \`main\` u svim tvojim projektima. Starije verzije git-a novu granu zovu \`master\`. Ako ti \`git init\` napravi \`master\`, jednom pokreni \`git config --global init.defaultBranch main\` i od tada će svaki nov projekat počinjati sa \`main\`.`,
+      md: `Glavna grana se zove \`main\` u svim tvojim projektima. Git bez podešavanja (i verzija 2.51 na tvom Mac-u) novu granu i dalje zove \`master\`, uz dugačku \`hint:\` poruku. Na tvom Mac-u je to već podešeno na \`main\`, ali ako ti na drugom računaru \`git init\` napravi \`master\`, jednom pokreni \`git config --global init.defaultBranch main\` i od tada će svaki nov projekat počinjati sa \`main\`.`,
     },
     {
       kind: "prose",
@@ -146,15 +146,15 @@ no changes added to commit (use "git add" and/or "git commit -a")`,
 index 3f2a9c1..8b7d04e 100644
 --- a/src/screens/BookingsScreen.tsx
 +++ b/src/screens/BookingsScreen.tsx
-@@ -24,7 +24,7 @@ type Tab = 'upcoming' | 'past'
+@@ -23,7 +23,7 @@ import type { Booking } from '@/types'
+ type Tab = 'upcoming' | 'past'
 
  /** Greške poslije kojih ponovni pokušaj nema smisla: rok je prošao ili termina više nema. */
 -const FINAL_CODES = new Set<string>(['CANCELLATION_WINDOW', 'SESSION_STARTED', 'NOT_FOUND'])
 +const FINAL_CODES = new Set<string>(['CANCELLATION_WINDOW', 'SESSION_STARTED', 'NOT_FOUND', 'SESSION_CANCELLED'])
 
  export const BookingsScreen = () => {
-   const navigate = useNavigate()
-   const now = useNow()`,
+   const navigate = useNavigate()`,
           hint: "`git diff`. Bez imena fajla prikazuje sve izmene koje još nisu u korpi.",
         },
         {
@@ -175,8 +175,8 @@ index 3f2a9c1..8b7d04e 100644
           hint: 'Ceo tekst ide u navodnike: `git commit -m "Otkazivanje: otkazan termin je konačna greška"`',
         },
         {
-          task: "Pogledaj poslednje commit-ove.",
-          accept: ["git\\s+log(\\s+--oneline)?(\\s+-n?\\s*\\d+)?"],
+          task: "Pogledaj poslednje commit-ove, jedan po redu.",
+          accept: ["git\\s+log\\s+--oneline(\\s+-n?\\s*\\d+)?", "git\\s+log\\s+-n?\\s*\\d+\\s+--oneline"],
           output: `4b1e9a2 (HEAD -> main) Otkazivanje: otkazan termin je konačna greška
 09ee7fe (origin/main, origin/HEAD) Greške: AbortError iz Firebase upisa u IndexedDB se više ne prijavljuje
 580632a Utisci: kartica na Početnoj se vraća svakih 7 dana, bez krajnjeg datuma
@@ -324,7 +324,8 @@ functions/lib/
           task: "Vrati se u granu `main`.",
           accept: ["git\\s+(switch|checkout)\\s+main"],
           output: `Switched to branch 'main'
-Your branch is up to date with 'origin/main'.`,
+Your branch is ahead of 'origin/main' by 1 commit.
+  (use "git push" to publish your local commits)`,
           hint: "`git switch main`. Primeti: fajlovi `fixedSlots.ts` sad nestanu iz editora, jer ih `main` još nema.",
         },
         {
@@ -336,7 +337,9 @@ Fast-forward
  src/lib/fixedSlots.ts          | 94 +++++++++++++++++++++++++
  src/screens/BookingsScreen.tsx |  2 +
  src/types.ts                   | 18 ++++--
- 4 files changed, 198 insertions(+), 3 deletions(-)`,
+ 4 files changed, 198 insertions(+), 3 deletions(-)
+ create mode 100644 src/lib/fixedSlots.test.ts
+ create mode 100644 src/lib/fixedSlots.ts`,
           hint: "Iz `main` grane: `git merge stalni-termini`.",
         },
       ],
@@ -362,7 +365,7 @@ Lokalni repozitorijum i onaj na GitHub-u se sinhronizuju sa tri komande:
 - \`git pull\` preuzima tuđe (ili tvoje sa drugog računara) commit-ove sa GitHub-a
 - \`git clone adresa\` preuzima ceo repozitorijum prvi put
 
-Kopija na GitHub-u se u git-u zove **\`origin\`**. Zato je u \`git log\` gore pisalo \`origin/main\`: tu je bio GitHub pri poslednjoj sinhronizaciji. Vercel i Cloudflare prate tvoj GitHub: čim uradiš \`git push\` na \`main\`, oni sami naprave build i objave sajt. A fajl \`.github/workflows/testovi.yml\` u ReformStudiju kaže GitHub-u da posle svakog push-a pokrene testove.`,
+Kopija na GitHub-u se u git-u zove **\`origin\`**. Zato je u \`git log\` gore pisalo \`origin/main\`: tu je bio GitHub pri poslednjoj sinhronizaciji. Vercel i Cloudflare mogu da prate tvoj GitHub: kad je projekat povezan sa repozitorijumom, čim uradiš \`git push\` na \`main\`, oni sami naprave build i objave sajt. A fajl \`.github/workflows/testovi.yml\` u ReformStudiju kaže GitHub-u da posle svakog push-a na \`main\` (i za svaki pull request) pokrene testove.`,
     },
     {
       kind: "exercise",
@@ -434,7 +437,7 @@ console.log(parsirajLog(log))
       id: "osnove-git-quiz",
       questions: [
         {
-          q: "Izmenjen je `App.tsx` i urađen `git commit -m \"nova boja\"`, ali git kaže `nothing added to commit`. Šta nedostaje?",
+          q: "Izmenjen je `App.tsx` i urađen `git commit -m \"nova boja\"`, ali git kaže `no changes added to commit`. Šta nedostaje?",
           options: [
             "`git init`",
             "`git add App.tsx` pre commit-a",

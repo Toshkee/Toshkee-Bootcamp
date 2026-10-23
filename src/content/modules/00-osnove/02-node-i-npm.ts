@@ -14,7 +14,7 @@ const lesson: Lesson = {
 
 **Node.js** je program koji JavaScript izvršava **van browsera**, direktno na tvom računaru. Zahvaljujući njemu JavaScript može da čita fajlove, pokreće servere i pravi build tvog sajta.
 
-Zašto je to važno tebi? Zato što su skoro svi alati koje koristiš napisani u JavaScriptu i pokreće ih Node: **Vite** (ReformStudio, milenaspajic), **Next.js** (PlazaHome, Pasted, my-portfolio), **TypeScript** kompajler \`tsc\`, **ESLint**, **Expo** (Looply), **Remotion** (vaky-content). Kad otkucaš \`npm run dev\`, zapravo Node pokreće jedan od tih alata.`,
+Zašto je to važno tebi? Zato što su skoro svi alati koje koristiš napisani u JavaScriptu i pokreće ih Node: **Vite** (ReformStudio, milenaspajic), **Next.js** (PlazaHome, Pasted, my-portfolio), **TypeScript** kompajler \`tsc\` (izuzetak je TypeScript 7 u ReformStudiju i vaky-content-u: prepisan je u Go, pa ga Node samo pokrene), **ESLint**, **Expo** (Looply), **Remotion** (vaky-content). Kad otkucaš \`npm run dev\`, zapravo Node pokreće jedan od tih alata.`,
     },
     {
       kind: "callout",
@@ -35,7 +35,7 @@ Kad instaliraš Node, dobiješ i **npm** (*Node Package Manager*). npm radi dve 
       kind: "callout",
       tone: "analogy",
       title: "Spisak za kupovinu, ostava i fiskalni račun",
-      md: `- **\`package.json\`** je spisak za kupovinu: "React, verzija 19 ili novija". Pišeš ga ti (ili AI).
+      md: `- **\`package.json\`** je spisak za kupovinu: "React 19, može i noviji 19.x". Pišeš ga ti (ili AI).
 - **\`node_modules/\`** je ostava u koju npm istovari sve što je kupio. Ogromna je i ne diraš je rukom.
 - **\`package-lock.json\`** je fiskalni račun: tačno koja verzija svakog paketa je kupljena, do poslednje cifre. Po njemu se ista kupovina može ponoviti na drugom računaru.`,
     },
@@ -113,7 +113,7 @@ Kad instaliraš Node, dobiješ i **npm** (*Node Package Manager*). npm radi dve 
       kind: "callout",
       tone: "warn",
       title: "`npm run dev`, ne `npm dev`",
-      md: `Skripte se pokreću sa **\`npm run ime\`**. Kucanje \`npm dev\` ili \`npm build\` daje grešku, jer npm misli da tražiš njegovu ugrađenu komandu. Izuzeci su samo \`npm start\` i \`npm test\`, koji rade i bez \`run\`. Looply zato koristi \`npm start\` (to je \`expo start\`).`,
+      md: `Skripte se pokreću sa **\`npm run ime\`**. Kucanje \`npm dev\` ili \`npm build\` daje grešku, jer npm misli da tražiš njegovu ugrađenu komandu. Izuzeci su \`npm start\` i \`npm test\` (i retko korišćeni \`npm stop\` i \`npm restart\`), koji rade i bez \`run\`. Looply zato koristi \`npm start\` (to je \`expo start\`).`,
     },
     {
       kind: "prose",
@@ -165,7 +165,7 @@ Znak ispred broja kaže npm-u koliko slobode ima pri instalaciji. Pogledaj Loopl
         },
         {
           lines: [6, 7],
-          md: "**`~` (tilda)**: strože od `^`. Prihvata samo nove **PATCH** verzije: `~5.7.0` dozvoljava `5.7.4`, ali ne `5.8.0`. Expo ovako pakuje svoje biblioteke, jer su testirane baš sa tom minor verzijom.",
+          md: "**`~` (tilda)**: strože od `^`. Prihvata samo nove **PATCH** verzije: `~5.7.0` dozvoljava `5.7.4`, ali ne `5.8.0`. Expo (\`npx expo install\`) ovako zapisuje biblioteke iz svog SDK-a, jer su testirane baš sa tom minor verzijom.",
         },
         {
           lines: [11, 19],
@@ -182,7 +182,7 @@ ReformStudio u \`package.json\` ima oko 30 paketa, a \`node_modules\` ima preko 
 Zato važe dva pravila:
 
 - **\`node_modules\` nikad ne ide u git.** Ogroman je i uvek se može ponovo napraviti komandom \`npm install\`. Videćeš ga u svakom \`.gitignore\` fajlu.
-- **\`package-lock.json\` uvek ide u git.** U njemu su zapisane tačne verzije svih 700+ paketa. Kad Vercel ili Firebase prave build tvog sajta, instaliraju baš te verzije, pa build radi isto kao kod tebe.`,
+- **\`package-lock.json\` uvek ide u git.** U njemu su zapisane tačne verzije svih 1100+ paketa. Kad Vercel pravi build tvog sajta ili Firebase instalira pakete za Functions, instaliraju baš te verzije, pa sve radi isto kao kod tebe.`,
     },
     {
       kind: "callout",
@@ -201,15 +201,15 @@ Zato važe dva pravila:
         {
           task: "Proveri da li je Node instaliran i koja je verzija.",
           accept: ["node\\s+(-v|--version)"],
-          output: "v24.11.0",
+          output: "v24.16.0",
           hint: "`node -v` (ili `node --version`).",
         },
         {
           task: "Instaliraj sve pakete iz `package.json`.",
           accept: ["npm\\s+(install|i|ci)"],
-          output: `added 718 packages, and audited 719 packages in 21s
+          output: `added 1156 packages, and audited 1157 packages in 21s
 
-142 packages are looking for funding
+214 packages are looking for funding
   run \`npm fund\` for details
 
 found 0 vulnerabilities`,
@@ -221,7 +221,7 @@ found 0 vulnerabilities`,
           output: `> reform-studio@0.1.0 dev
 > vite
 
-  VITE v8.3.1  ready in 412 ms
+  VITE v8.3.2  ready in 412 ms
 
   ➜  Local:   http://localhost:5173/
   ➜  Network: use --host to expose
@@ -234,7 +234,7 @@ found 0 vulnerabilities`,
           output: `> reform-studio@0.1.0 build
 > tsc -b && vite build
 
-vite v8.3.1 building for production...
+vite v8.3.2 building client environment for production...
 ✓ 1843 modules transformed.
 dist/index.html                   2.31 kB │ gzip:   1.02 kB
 dist/assets/index-B7xQ2kLm.css   48.90 kB │ gzip:   9.12 kB
@@ -245,7 +245,10 @@ dist/assets/index-Cz81fJqP.js   612.44 kB │ gzip: 179.03 kB
         {
           task: "Dodaj u projekat paket `clsx` (mala biblioteka za CSS klase). Treba aplikaciji da radi, pa ide u obične `dependencies`.",
           accept: ["npm\\s+(install|i|add)\\s+clsx"],
-          output: `added 1 package, and audited 720 packages in 2s
+          output: `added 1 package, and audited 1158 packages in 2s
+
+214 packages are looking for funding
+  run \`npm fund\` for details
 
 found 0 vulnerabilities`,
           hint: "`npm install clsx`. npm ga doda i u `package.json`, i u `package-lock.json`, i u `node_modules`.",
@@ -256,7 +259,10 @@ found 0 vulnerabilities`,
             "npm\\s+(install|i|add)\\s+(-D|--save-dev)\\s+prettier",
             "npm\\s+(install|i|add)\\s+prettier\\s+(-D|--save-dev)",
           ],
-          output: `added 1 package, and audited 721 packages in 2s
+          output: `added 1 package, and audited 1159 packages in 2s
+
+215 packages are looking for funding
+  run \`npm fund\` for details
 
 found 0 vulnerabilities`,
           hint: "Opcija `-D` znači *dev*: `npm install -D prettier`.",
@@ -267,7 +273,7 @@ found 0 vulnerabilities`,
       kind: "callout",
       tone: "info",
       title: "A šta je onda `npx`?",
-      md: `\`npx\` pokreće komandu iz nekog paketa. Ako je paket već u \`node_modules\` (kao \`tsc\` iz \`typescript\`), \`npx tsc --noEmit\` koristi baš tu verziju. Ako nije, npx ga privremeno preuzme. Zato \`npx create-next-app\` ili \`npx expo install\` rade i bez ikakve instalacije unapred.`,
+      md: `\`npx\` pokreće komandu iz nekog paketa. Ako je paket već u \`node_modules\` (kao \`tsc\` iz \`typescript\`), \`npx tsc --noEmit\` koristi baš tu verziju. Ako nije, npx ga privremeno preuzme. Zato \`npx create-next-app\` radi i bez ikakve instalacije unapred, a \`npx expo install\` u Looply-ju koristi \`expo\` koji je već u \`node_modules\`.`,
     },
     {
       kind: "prose",

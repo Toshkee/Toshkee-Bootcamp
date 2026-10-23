@@ -25,7 +25,7 @@ Zašto kod nije u jednom velikom fajlu?
       title: "Radnja sa izlogom",
       md: `Svaki fajl je radnja. Unutra ima svašta: alat, pomoćne stvari, nedovršene poslove. \`export\` je **izlog**: samo ono što staviš u izlog drugi mogu da "kupe" sa \`import\`. Sve ostalo ostaje u magacinu, privatno.
 
-Funkcija \`ms\` u \`shared/rules.ts\` iz prošle lekcije nema \`export\`. To je alat iz magacina, a \`hasStarted\` i \`canCancel\` su u izlogu.`,
+Funkcija \`ms\` u \`shared/rules.ts\` iz lekcije o funkcijama nema \`export\`. To je alat iz magacina, a \`hasStarted\` i \`canCancel\` su u izlogu.`,
     },
     {
       kind: "prose",
@@ -81,7 +81,7 @@ Prve tri su default (bez zagrada), poslednja uvozi dva named exporta iz jednog f
       file: "main.js",
       lang: "js",
       startLine: 6,
-      intro: "Prve linije Mileninog sajta. Četiri biblioteke, oba oblika importa.",
+      intro: "Prve linije Mileninog sajta. Četiri importa iz dva paketa (`gsap` i `lenis`), oba oblika importa.",
       code: `import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
@@ -114,7 +114,7 @@ import Lenis from "lenis";
 
 \`\`\`js
 import { Lenis } from "lenis"       // ❌ Lenis je default, a ovo traži named
-import ScrollTrigger from "gsap/ScrollTrigger"  // ❌ obrnuto
+import create from "zustand"        // ❌ obrnuto: create je named, a ovo traži default
 \`\`\`
 
 Poruka greške je tipa *"does not provide an export named 'Lenis'"* ili *"has no default export"*. Kad je vidiš, prvo proveri zagrade.`,

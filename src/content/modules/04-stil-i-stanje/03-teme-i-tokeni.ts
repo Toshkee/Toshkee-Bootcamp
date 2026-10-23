@@ -304,7 +304,7 @@ Komponente koriste samo \`bg-brand-300\` i \`text-ink-900\`, i ne znaju ni da po
         },
         {
           lines: [34, 37],
-          md: "Tokeni nisu samo boje: `shadow-card` i `shadow-float` dobijaju senku obojenu tamnijom nijansom boje studija (maslinasta u Fitness-u, roze u Pilatesu).",
+          md: "Tokeni nisu samo boje: `shadow-card` i `shadow-column` dobijaju senku obojenu tamnijom nijansom boje studija (maslinasta u Fitness-u, roze u Pilatesu).",
         },
       ],
     },

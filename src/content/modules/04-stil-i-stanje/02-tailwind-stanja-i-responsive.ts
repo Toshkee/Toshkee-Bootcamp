@@ -243,7 +243,7 @@ Najvažnije pravilo: **Tailwind je mobile-first**. Klasa bez prefiksa je za tele
       kind: "callout",
       tone: "warn",
       title: "Česta greška: sm: nije „mali ekran”",
-      md: "`sm:hidden` **ne** sakriva element na telefonu. Sakriva ga od 640px naviše, dakle svuda **osim** na telefonu. Nešto što treba da se vidi samo na telefonu piše se `md:hidden`, a nešto samo za veće ekrane `hidden lg:block` (tako PlazaHome sakriva strelicu u listi proizvoda na telefonu). Za opseg \"samo ispod\" postoje i `max-md:` varijante, ali retko ti trebaju.",
+      md: "`sm:hidden` **ne** sakriva element na telefonu. Sakriva ga od 640px naviše, dakle svuda **osim** na telefonu. Zato se ono što treba da se vidi samo na telefonu piše baš `sm:hidden` (ili `md:hidden`, ako i položen telefon računaš kao telefon), a nešto samo za veće ekrane `hidden lg:block` (tako PlazaHome sakriva strelicu u listi proizvoda na telefonu). Za opseg \"samo ispod\" postoje i `max-md:` varijante, ali retko ti trebaju.",
     },
     {
       kind: "fromYourCode",
@@ -787,7 +787,7 @@ export default function App() {
             "`focus-visible:` na strelici",
           ],
           answer: 0,
-          why: "`group-hover:` traži najbližeg roditelja sa klasom `group`. Bez njega varijanta nema na šta da se odnosi.",
+          why: "`group-hover:` važi kad je miš iznad nekog pretka sa klasom `group`. Bez njega varijanta nema na šta da se odnosi.",
         },
         {
           q: "Koje klase dobije dugme kad je `izabran` jednako `false`?",

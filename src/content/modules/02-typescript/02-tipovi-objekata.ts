@@ -516,7 +516,7 @@ const c = { vreme: "18:00" }`,
             "Bilo šta, jer `?` isključuje proveru",
           ],
           answer: 2,
-          why: "`?` znači da polje sme da fali (tj. da bude `undefined`), a `| null` dozvoljava i eksplicitno `null`. Tvoj kod koristi `null` da kaže *plan je obrisan*, a odsustvo polja za stare naloge.",
+          why: "`?` znači da polje sme da fali (tj. da bude `undefined`), a `| null` dozvoljava i eksplicitno `null`. Tvoj kod koristi `null` da kaže *plan je obrisan*, a polja nema kad plan nikad nije ni postavljen (registracija pravi dokument bez njega).",
         },
         {
           q: "Šta od ovoga **može** samo `type`, a ne `interface`?",

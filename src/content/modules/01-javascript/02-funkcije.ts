@@ -73,7 +73,7 @@ const cenaSaPdv = (cena) => {
 const noviTermin = (vreme) => ({ vreme, zauzeto: 0 })`,
       highlight: [2, 7, 11],
       caption:
-        "Bez zagrada na liniji 11, JavaScript bi `{` shvatio kao početak tela funkcije, a ne kao objekat, i funkcija bi vratila `undefined`.",
+        "Bez zagrada na liniji 11, JavaScript bi `{` shvatio kao početak tela funkcije, a ne kao objekat. Ovde bi to bila `SyntaxError`, a sa samo jednim poljem (`() => { vreme: \"18:00\" }`) funkcija bi tiho vratila `undefined`.",
     },
     {
       kind: "fromYourCode",
@@ -109,7 +109,7 @@ export const isWithinCancelWindow = (startsAt: When, now: Date) =>
         },
         {
           lines: [6, 7],
-          md: "Implicitni return može da pređe u sledeći red. Strelica na kraju linije 6 kaže: *vrati ono što sledi*. Funkcija računa koliko sati ima do početka i poredi to sa rokom za otkazivanje.",
+          md: "Implicitni return može da pređe u sledeći red. Strelica na kraju linije 18 kaže: *vrati ono što sledi*. Funkcija računa koliko sati ima do početka i poredi to sa rokom za otkazivanje.",
         },
         {
           lines: [13, 14],
@@ -150,7 +150,7 @@ Default se koristi samo kad je argument izostavljen ili je \`undefined\`. Ako po
         },
         {
           lines: 3,
-          md: "Isto, ali vraća **sve** pronađene elemente. `Array.from(...)` ih pretvara u pravi niz, da bi posle mogle da se koriste metode kao `.forEach` i `.map` (lekcija o metodama nizova).",
+          md: "Isto, ali vraća **sve** pronađene elemente. `Array.from(...)` ih pretvara u pravi niz, da bi posle mogle da se koriste metode kao `.map` i `.filter` (lekcija o metodama nizova).",
         },
         {
           lines: [4, 5],

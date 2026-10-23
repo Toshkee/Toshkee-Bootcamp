@@ -24,7 +24,7 @@ Događaje već znaš iz JSX lekcije: \`onClick\`, \`onChange\`, \`onSubmit\`… 
       kind: "code",
       lang: "tsx",
       filename: "Dogadjaji.tsx",
-      code: `import { useState, type ChangeEvent, type FormEvent } from "react"
+      code: `import { useState, type ChangeEvent, type SubmitEvent } from "react"
 
 function Pretraga() {
   const [upit, setUpit] = useState("")
@@ -37,7 +37,7 @@ function Pretraga() {
     setUpit(e.target.value)   // šta je trenutno upisano u polje
   }
 
-  const posalji = (e: FormEvent<HTMLFormElement>) => {
+  const posalji = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()        // ne osvežavaj stranicu
     console.log("Tražim:", upit)
   }
@@ -50,7 +50,7 @@ function Pretraga() {
 }`,
       highlight: [7, 10, 11, 14, 15],
       caption:
-        "`e.target` je element na kom se događaj desio, pa je `e.target.value` tekst iz polja. Tipovi događaja (`ChangeEvent`, `FormEvent`, `MouseEvent`) uvoze se iz `react` kao generici sa tipom elementa.",
+        "`e.target` je element na kom se događaj desio, pa je `e.target.value` tekst iz polja. Tipovi događaja (`ChangeEvent`, `SubmitEvent`, `MouseEvent`) uvoze se iz `react` kao generici sa tipom elementa. Stariji `FormEvent` je u React 19 tipovima označen kao zastareo (deprecated).",
     },
     {
       kind: "callout",
@@ -309,7 +309,7 @@ Obrazac koji koristi svaka forma u ReformStudiju:
         },
         {
           lines: [24, 25],
-          md: "Submit handler. Prva stvar: `preventDefault()`, da se stranica ne osveži.",
+          md: "Submit handler. Prva stvar: `preventDefault()`, da se stranica ne osveži. Tip `FormEvent` je stariji naziv: u React 19 tipovima je označen kao zastareo, a novi kod piše `SubmitEvent`.",
         },
         {
           lines: [26, 31],
@@ -523,7 +523,7 @@ export default function App() {
 4. Ispod svakog polja prikaži njegovu grešku u \`<p className="error">\`.
 5. Kucanje u polje briše **samo njegovu** grešku.
 6. Dugme **Pošalji** je onemogućeno dok su **oba** polja prazna.`,
-      starter: `import { useState, type FormEvent } from "react"
+      starter: `import { useState, type SubmitEvent } from "react"
 
 type Greske = { ime?: string; email?: string }
 
@@ -533,7 +533,7 @@ export default function App() {
   const [greske, setGreske] = useState<Greske>({})
   const [poslato, setPoslato] = useState(false)
 
-  const posalji = (e: FormEvent<HTMLFormElement>) => {
+  const posalji = (e: SubmitEvent<HTMLFormElement>) => {
     // 1. spreči osvežavanje
     // 2. proveri polja i upiši greške
     // 3. ako ima grešaka, prekini
@@ -556,7 +556,7 @@ export default function App() {
   )
 }
 `,
-      solution: `import { useState, type FormEvent } from "react"
+      solution: `import { useState, type SubmitEvent } from "react"
 
 type Greske = { ime?: string; email?: string }
 
@@ -566,7 +566,7 @@ export default function App() {
   const [greske, setGreske] = useState<Greske>({})
   const [poslato, setPoslato] = useState(false)
 
-  const posalji = (e: FormEvent<HTMLFormElement>) => {
+  const posalji = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
     const nadjene: Greske = {}
     if (ime.trim().length < 2) nadjene.ime = "Upiši ime i prezime."

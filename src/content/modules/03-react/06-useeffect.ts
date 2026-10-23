@@ -262,7 +262,7 @@ export default function App() {
         },
         {
           lines: [4, 6],
-          md: "Efekat sa praznim nizom, `[]` u liniji 23: pokreće se jednom, kad se komponenta pojavi. `timer` je `let` jer će se menjati svake noći.",
+          md: "Efekat sa praznim nizom, `[]` u liniji 32: pokreće se jednom, kad se komponenta pojavi. `timer` je `let` jer će se menjati svake noći.",
         },
         {
           lines: [7, 15],
@@ -300,6 +300,7 @@ Najčešći efekat u praksi: komponenta se pojavi, treba joj podatak sa servera.
   useEffect(() => {
     let ignorisi = false
     setUcitava(true)
+    setGreska(null)
     ucitajTermine(studio)
       .then((lista) => { if (!ignorisi) setTermini(lista) })
       .catch((e) => { if (!ignorisi) setGreska(String(e)) })
@@ -311,9 +312,15 @@ Najčešći efekat u praksi: komponenta se pojavi, treba joj podatak sa servera.
   if (greska) return <p className="error">{greska}</p>
   return <ul>{termini.map((t) => <li key={t.id}>{t.naziv}</li>)}</ul>
 }`,
-      highlight: [7, 10, 13, 14],
+      highlight: [7, 11, 14, 15],
       caption:
         "Tri stanja, tri izgleda ekrana. Zastavica `ignorisi` štiti od zakasnelih odgovora, o tome odmah ispod.",
+    },
+    {
+      kind: "callout",
+      tone: "info",
+      title: "Ako ESLint podvuče setUcitava(true)",
+      md: "Novija ESLint pravila za React (`react-hooks/set-state-in-effect`, deo podešavanja koje Next.js projekti dobijaju) prijavljuju menjanje stanja direktno u telu efekta. Za učenje je ovaj oblik najjasniji, a isti obrazac ima i zvanična React dokumentacija. U pravim aplikacijama podatke najčešće učitava store (kao `useMemberStore` u ReformStudiju) ili biblioteka za podatke, pa ovakav efekat retko pišeš ručno.",
     },
     {
       kind: "prose",

@@ -77,7 +77,7 @@ Skoro svaka klasa ima oblik **\`šta-koliko\`**:
       kind: "callout",
       tone: "tip",
       title: "Boje sa providnošću",
-      md: "`border-ink-900/10` znači: boja `ink-900`, ali sa **10% neprozirnosti**. Kosa crta posle boje je providnost. Tako ReformStudio pravi suptilne ivice koje se uklapaju u bilo koju pozadinu.",
+      md: "`border-ink-900/10` znači: boja `ink-900`, ali sa **10% neprozirnosti**. Broj posle kose crte je neprozirnost (opacity). Tako ReformStudio pravi suptilne ivice koje se uklapaju u bilo koju pozadinu.",
     },
     {
       kind: "playground",
@@ -167,7 +167,7 @@ Boje i razmaci su lakši deo. Pravo pitanje je **gde** stoji koji element. Za to
         },
         {
           lines: 8,
-          md: "`rounded-full border border-ink-900/10 bg-white px-4`: pilula oblik, tanka ivica u tamnoj boji sa 10% providnosti, bela pozadina i 16px levo-desno. `ink-900` nije Tailwind boja, nego boja koju je ReformStudio sam definisao (o tome u lekciji o temama).",
+          md: "`rounded-full border border-ink-900/10 bg-white px-4`: pilula oblik, tanka ivica u tamnoj boji sa 10% neprozirnosti, bela pozadina i 16px levo-desno. `ink-900` nije Tailwind boja, nego boja koju je ReformStudio sam definisao (o tome u lekciji o temama).",
         },
         {
           lines: 8,
@@ -175,7 +175,7 @@ Boje i razmaci su lakši deo. Pravo pitanje je **gde** stoji koji element. Za to
         },
         {
           lines: [10, 13],
-          md: "`truncate` skrati predugačko ime tri tačke (`…`) umesto da ga prelomi u novi red. `shrink-0` kaže da se reč \"Promeni\" nikad ne skuplja, pa se uvek skraćuje ime studija.",
+          md: "`truncate` skrati predugačko ime i doda tri tačke (`…`) umesto da ga prelomi u novi red. `shrink-0` kaže da se reč \"Promijeni\" nikad ne skuplja, pa se uvek skraćuje ime studija.",
         },
       ],
     },
@@ -375,7 +375,7 @@ export default function App() {
             "Ivica samo sa 10% strana",
           ],
           answer: 0,
-          why: "Kosa crta posle boje je providnost: `/10` je 10%, `/50` je pola.",
+          why: "Broj posle kose crte je neprozirnost (opacity): `/10` je 10%, `/50` je pola.",
         },
         {
           q: "Kada se koriste uglaste zagrade, kao u `text-[13px]`?",

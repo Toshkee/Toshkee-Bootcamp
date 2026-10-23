@@ -93,7 +93,7 @@ export const ProfileScreen = () => {
         },
         {
           lines: [11, 12],
-          md: "Ovde generik **treba**. Za `form` on garantuje da početni objekat ima sva tri polja. Za `errors` je ključan: bez `<Errors>`, `{}` bi bio tip *prazan objekat* i `setErrors({ phone: '...' })` bi bila greška. A pošto je `Errors` `Partial`, prazan objekat je ispravna početna vrednost.",
+          md: "Ovde generik **treba**. Za `form` on garantuje da početni objekat ima sva tri polja. Za `errors` je ključan: bez `<Errors>`, tip stanja bi bio `{}` (*prazan objekat*), pa bi već `errors[name]` u funkciji `field` ispod bio greška: TypeScript ne bi znao da u tom objektu uopšte mogu da postoje polja forme. A pošto je `Errors` `Partial`, prazan objekat je ispravna početna vrednost.",
         },
       ],
     },
@@ -372,7 +372,7 @@ console.log(punoIme({ ime: "Ana", prezime: "Petrović" }))
       id: "ts-utility-3",
       title: "Svaki tip treninga",
       lang: "ts",
-      prompt: `Dve greške, obe sa porukom tipa *Property ... is missing*.
+      prompt: `TypeScript prijavljuje tri greške. Dve kažu da nešto fali (*Property 'cardio' is missing...* i *Type '{}' is missing the following properties...*), a treća, u funkciji \`naziv\`, nestaje čim popraviš prvu.
 
 **Zadatak:**
 1. \`NAZIVI\` koristi \`satisfies\` da proveri da postoji naziv za **svaki** tip treninga. Dodaj ono što fali (\`cardio\` je \`"Kardio"\`).

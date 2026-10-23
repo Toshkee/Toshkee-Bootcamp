@@ -208,7 +208,7 @@ export default nextConfig;
       steps: [
         {
           lines: [3, 8],
-          md: "`target` je verzija JavaScripta koju kod sme da koristi, a `lib` kaže koji su ugrađeni API-ji dostupni. `\"dom\"` znači: postoje `document`, `window` i ostalo iz browsera.",
+          md: "`target` je verzija JavaScripta u koju bi TypeScript preveo kod (ovde prevođenje ionako radi Next, vidi `noEmit` niže), a `lib` kaže koji su ugrađeni API-ji dostupni. `\"dom\"` znači: postoje `document`, `window` i ostalo iz browsera.",
         },
         {
           lines: 11,
@@ -294,7 +294,7 @@ ReformStudio nije Next, nego **Vite + React**. Koren izgleda slično, uz nekolik
         },
         {
           lines: [6, 11],
-          md: "Isti `@` alias kao u `tsconfig.json`, plus `@shared` koji pokazuje u `functions/src/shared`. Tako frontend i backend dele isti kod za pravila i datume. Alias mora da postoji **na oba mesta**: u `tsconfig` da bi TypeScript razumeo, i ovde da bi Vite znao gde je fajl.",
+          md: "Isti `@` alias kao u tsconfig-u (ovde u `tsconfig.app.json`), plus `@shared` koji pokazuje u `functions/src/shared`. Tako frontend i backend dele isti kod za pravila i datume. Alias mora da postoji **na oba mesta**: u `tsconfig` da bi TypeScript razumeo, i ovde da bi Vite znao gde je fajl.",
         },
         {
           lines: [15, 20],
@@ -302,7 +302,7 @@ ReformStudio nije Next, nego **Vite + React**. Koren izgleda slično, uz nekolik
         },
         {
           lines: [21, 24],
-          md: "**Plugin-ovi** dodaju Vite-u sposobnosti: `react()` razume JSX, `tailwindcss()` pravi CSS iz klasa, a `splash()` je **tvoj** plugin definisan na vrhu istog fajla, koji ubacuje uvodni ekran u `index.html`.",
+          md: "**Plugin-ovi** dodaju Vite-u sposobnosti: `react()` priprema React (JSX i *Fast Refresh*: izmena se vidi odmah, bez gubitka stanja), `tailwindcss()` pravi CSS iz klasa, a `splash()` je **tvoj** plugin definisan na vrhu istog fajla, koji ubacuje uvodni ekran u `index.html`.",
         },
       ],
     },
@@ -368,7 +368,7 @@ Ovi fajlovi ne utiču na to kako kod **radi**, nego **gde i kako se objavljuje**
       kind: "prose",
       md: `### Uputstva: za ljude i za AI
 
-**\`README.md\`** je prvi fajl koji čovek pročita kad otvori projekat (GitHub ga prikazuje odmah ispod liste fajlova). Dobar README kaže šta je projekat i kako se pokreće. PlazaHome-ov, na primer, ima odeljak "Pokretanje" sa svim npm skriptama i objašnjenjem šta koja radi.
+**\`README.md\`** je prvi fajl koji čovek pročita kad otvori projekat (GitHub ga prikazuje odmah ispod liste fajlova). Dobar README kaže šta je projekat i kako se pokreće. PlazaHome-ov, na primer, ima odeljak "Pokretanje" sa glavnim npm skriptama i objašnjenjem šta koja radi.
 
 **\`AGENTS.md\`** i **\`CLAUDE.md\`** su isto to, ali **za AI asistente**. Claude Code automatski pročita \`CLAUDE.md\` pre nego što počne da radi u projektu. Tu stoje komande, pravila pisanja koda i stvari koje AI ne bi znao sam. Evo početka \`CLAUDE.md\` iz my-portfolio-a:`,
     },

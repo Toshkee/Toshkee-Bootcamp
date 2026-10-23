@@ -219,7 +219,7 @@ export const allWithId = <T>(snapshot: QuerySnapshot<T>): WithId<T>[] =>
       kind: "prose",
       md: `### Ograničenje: T extends ...
 
-Ponekad \`T\` ne sme biti baš bilo šta. U Looply-ju, \`SegmentedControl\` (dugmad tipa *Lista / Kalendar*) prima opcije čije su vrednosti tekstovi:`,
+Ponekad \`T\` ne sme biti baš bilo šta. U Looply-ju, \`SegmentedControl\` (dugmad tipa *Lista / Mesec* na ekranu kalendara) prima opcije čije su vrednosti tekstovi:`,
     },
     {
       kind: "code",
@@ -240,7 +240,7 @@ interface SegmentedControlProps<T extends string> {
 export function SegmentedControl<T extends string>({ options, value, onChange, accessibilityLabel }: SegmentedControlProps<T>) {`,
       highlight: [1, 9, 13],
       caption:
-        "`T extends string` znači: *T može biti bilo koji tekstualni tip*, recimo `'list' | 'calendar'`. Zahvaljujući tome, `onChange` u komponenti koja koristi `SegmentedControl` dobija baš `'list' | 'calendar'`, a ne običan `string`.",
+        "`T extends string` znači: *T može biti bilo koji tekstualni tip*, recimo `'list' | 'month'`. Zahvaljujući tome, `onChange` u komponenti koja koristi `SegmentedControl` dobija baš `'list' | 'month'`, a ne običan `string`.",
     },
     {
       kind: "callout",
@@ -536,7 +536,7 @@ async function main() {
     {
       id: "fc-ts-generici-5",
       front: "Šta znači `T extends string`?",
-      back: "Ograničenje: `T` može biti bilo koji tip koji je tekst (npr. `'list' | 'calendar'`), ali ne broj ili objekat.",
+      back: "Ograničenje: `T` može biti bilo koji tip koji je tekst (npr. `'list' | 'month'`), ali ne broj ili objekat.",
     },
   ],
 };

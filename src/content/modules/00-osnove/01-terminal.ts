@@ -29,9 +29,9 @@ Kad otvoriš aplikaciju **Terminal** (Cmd + Space, pa otkucaj "Terminal"), vidi�
     {
       kind: "code",
       lang: "bash",
-      code: `toshkee@MacBook-Pro ~ % `,
+      code: `toshkee@MacBook-Air ~ % `,
       caption:
-        "`toshkee` je tvoj korisnik, `MacBook-Pro` ime računara, `~` je folder u kom se trenutno nalaziš, a `%` znači \"čekam komandu\". Taj red se zove **prompt**.",
+        "`toshkee` je tvoj korisnik, `MacBook-Air` ime računara, `~` je folder u kom se trenutno nalaziš, a `%` znači \"čekam komandu\". Taj red se zove **prompt**. Ovo je podrazumevani macOS izgled. Na tvom Mac-u je uključen oh-my-zsh (tema *robbyrussell*), pa je tvoj prompt kraći: `➜  ~`, a u git projektu pokazuje i granu: `➜  ReformStudio git:(main)`.",
     },
     {
       kind: "prose",
@@ -78,17 +78,18 @@ A \`~/ReformStudio\` je isto što i \`/Users/toshkee/ReformStudio\`, samo kraće
         {
           task: "Izlistaj šta se nalazi u ovom folderu komandom `ls` (*list*).",
           accept: ["ls"],
-          output: `Applications    Library         Pictures        my-portfolio
-Bootcamp        Looply          PlazaHome       vaky-content
-Desktop         Movies          Public
-Documents       Music           ReformStudio
-Downloads       Pasted          milenaspajic`,
+          output: `Applications            Movies                  ReformStudio
+Desktop                 Music                   Toshkee-Bootcamp
+Documents               Pasted                  milenaspajic
+Downloads               Pictures                my-portfolio
+Library                 PlazaHome               vaky-content
+Looply                  Public`,
           hint: "Dva slova: `ls`.",
         },
         {
           task: "Uđi u folder `ReformStudio` komandom `cd` (*change directory*).",
           accept: [
-            "cd\\s+[\"']?(~/|/Users/toshkee/)?ReformStudio/?[\"']?",
+            "cd\\s+[\"']?(~/|/Users/toshkee/|\\./)?ReformStudio/?[\"']?",
           ],
           output: "",
           cwd: "~/ReformStudio",
@@ -123,7 +124,7 @@ drwxr-xr-x@  21 toshkee  staff     672 Oct  6 18:00 src
         },
         {
           task: "Skoči direktno u `src` folder ReformStudija jednom komandom, relativnom putanjom.",
-          accept: ["cd\\s+[\"']?(~/|/Users/toshkee/)?ReformStudio/src/?[\"']?"],
+          accept: ["cd\\s+[\"']?(~/|/Users/toshkee/|\\./)?ReformStudio/src/?[\"']?"],
           output: "",
           cwd: "~/ReformStudio/src",
           hint: "Putanja može imati više delova: `cd ReformStudio/src`.",
@@ -148,7 +149,7 @@ Slova posle crtice zovu se **opcije** (flags). Menjaju ponašanje komande:
 
 Skriven fajl je svaki čije ime počinje tačkom: \`.git\`, \`.gitignore\`, \`.env.example\`. Finder ih ne prikazuje (osim ako pritisneš Cmd + Shift + .), ali oni su često najvažniji fajlovi u projektu. U \`.git\` folderu živi cela istorija tvog koda.
 
-Prvo slovo u redu govori šta je to: \`d\` je folder (*directory*), a \`-\` je običan fajl. Primeti i da \`node_modules\` ima 724 stavke. O tome u sledećoj lekciji.`,
+Prvo slovo u redu govori šta je to: \`d\` je folder (*directory*), a \`-\` je običan fajl. Primeti i da \`node_modules\` ima preko 700 stavki: broj 724 u drugoj koloni je, kod foldera, broj stavki unutra plus \`.\` i \`..\`. O tome u sledećoj lekciji.`,
     },
     {
       kind: "callout",
@@ -182,7 +183,7 @@ Pazi i na velika slova. Mac će ti oprostiti \`cd reformstudio\`, ali server na 
         },
         {
           task: "Uđi u njega.",
-          accept: ["cd\\s+[\"']?(~/)?vezbe/?[\"']?"],
+          accept: ["cd\\s+[\"']?(~/|\\./)?vezbe/?[\"']?"],
           output: "",
           cwd: "~/vezbe",
           hint: "`cd vezbe`. Probaj da otkucaš samo `cd ve` pa pritisneš **Tab**: terminal sam dopuni ime.",

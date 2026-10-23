@@ -78,7 +78,7 @@ termini[1].vreme  // "18:00"  drugi objekat, pa njegovo polje`,
       kind: "prose",
       md: `### Destrukturiranje: raspakivanje u promenljive
 
-Često ti iz objekta trebaju samo dva-tri polja. Umesto \`const studioId = state.studioId\` u svakom redu, možeš da ih "raspakuješ" odjednom. Imena u \`{ }\` moraju biti **ista kao imena polja**. Kod nizova se raspakuje **po redu**, pa su imena slobodna.
+Često ti iz objekta trebaju samo dva-tri polja. Umesto \`const studioId = state.studioId\` u svakom redu, možeš da ih "raspakuješ" odjednom. Imena u \`{ }\` moraju biti **ista kao imena polja** (a drugo ime se daje ovako: \`const { clientX: x } = event\`). Kod nizova se raspakuje **po redu**, pa su imena slobodna.
 
 Ovo je iz tvojih projekata:`,
     },
@@ -123,7 +123,7 @@ const duzaLista = [...termini, noviTermin]     // nov niz, sa jednim više na kr
 
 Redosled je bitan: polje napisano **kasnije** pobeđuje. \`{ ...termin, zauzeto: 5 }\` daje 5, a \`{ zauzeto: 5, ...termin }\` vraća staru vrednost iz \`termin\`.
 
-Tri tačke u parametrima rade obrnuto i zovu se **rest**: skupljaju "sve ostalo" u jedan niz ili objekat, npr. \`const { id, ...ostalo } = termin\`.`,
+Tri tačke pri destrukturiranju (i u parametrima funkcije) rade obrnuto i zovu se **rest**: skupljaju "sve ostalo" u jedan niz ili objekat, npr. \`const { id, ...ostalo } = termin\`.`,
     },
     {
       kind: "callout",

@@ -183,11 +183,11 @@ const c = \`Ukupno: \${brojTermina * 1500} RSD\``,
       kind: "prose",
       md: `### Truthy i falsy
 
-U \`if (...)\` JavaScript ne traži baš \`true\` ili \`false\`. Svaku vrednost pretvori u boolean. Vrednosti koje se pretvore u \`false\` zovu se **falsy**, i ima ih tačno šest:
+U \`if (...)\` JavaScript ne traži baš \`true\` ili \`false\`. Svaku vrednost pretvori u boolean. Vrednosti koje se pretvore u \`false\` zovu se **falsy**. U praksi ćeš sretati ovih šest:
 
 \`false\`, \`0\`, \`""\` (prazan tekst), \`null\`, \`undefined\`, \`NaN\`
 
-**Sve ostalo je truthy**, uključujući \`"0"\`, \`"false"\`, \`[]\` (prazan niz) i \`{}\` (prazan objekat). Zato je \`if (!btn)\` kratak način da se kaže "ako nema dugmeta".
+(Falsy su još i dve retke vrednosti: \`-0\` i \`0n\`, nula tipa BigInt.) **Sve ostalo je truthy**, uključujući \`"0"\`, \`"false"\`, \`[]\` (prazan niz) i \`{}\` (prazan objekat). Zato je \`if (!btn)\` kratak način da se kaže "ako nema dugmeta".
 
 Kad ti treba pravi boolean od bilo čega, koristi \`Boolean(x)\` (ili \`!!x\`, isto je). A kad ti treba broj od teksta (sve iz forme stiže kao tekst), koristi \`Number("3")\`, što daje \`3\`.`,
     },
@@ -211,7 +211,7 @@ JavaScript ima dva poređenja jednakosti:
 - \`==\` (labavo) pre poređenja **pokušava da pretvori** vrednosti u isti tip. Zato je \`"5" == 5\` tačno, \`0 == ""\` tačno, \`null == undefined\` tačno.
 - \`===\` (strogo) poredi i vrednost **i tip**. \`"5" === 5\` je \`false\`, jer je jedno tekst, a drugo broj.
 
-Pravilo je jednostavno: **uvek \`===\` i \`!==\`**. Labavo poređenje krije greške, na primer kad ti iz forme stigne \`"0"\` umesto \`0\`. U svim tvojim projektima videćeš isključivo \`===\`.`,
+Pravilo je jednostavno: **uvek \`===\` i \`!==\`**. Labavo poređenje krije greške, na primer kad ti iz forme stigne \`"0"\` umesto \`0\`. U tvojim projektima videćeš skoro isključivo \`===\`. Retki izuzetak je \`x != null\` u portfoliju, namerni idiom koji jednom proverom hvata i \`null\` i \`undefined\`.`,
     },
     {
       kind: "fromYourCode",
@@ -393,7 +393,7 @@ console.log(cena)`,
           q: "Koja od ovih vrednosti je **falsy**?",
           options: ["`\"0\"`", "`[]`", "`0`", "`\"false\"`"],
           answer: 2,
-          why: "Falsy su samo `false`, `0`, `\"\"`, `null`, `undefined` i `NaN`. Tekst `\"0\"` nije prazan, pa je truthy. Prazan niz je takođe truthy.",
+          why: "Falsy su `false`, `0`, `\"\"`, `null`, `undefined` i `NaN` (i retki `-0` i `0n`). Tekst `\"0\"` nije prazan, pa je truthy. Prazan niz je takođe truthy.",
         },
         {
           q: "Šta ispisuje ovaj kod?",
@@ -434,7 +434,7 @@ console.log(cena)`,
     {
       id: "fc-js-promenljive-2",
       front: "Koje su **falsy** vrednosti u JavaScriptu?",
-      back: "`false`, `0`, `\"\"`, `null`, `undefined`, `NaN`. Sve ostalo je truthy, i `\"0\"` i `[]`.",
+      back: "`false`, `0`, `\"\"`, `null`, `undefined`, `NaN` (i retki `-0` i `0n`). Sve ostalo je truthy, i `\"0\"` i `[]`.",
     },
     {
       id: "fc-js-promenljive-3",

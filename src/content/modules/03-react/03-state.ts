@@ -98,7 +98,7 @@ function Brojac() {
       id: "react-state-peskovnik",
       title: "Promenljiva protiv state-a",
       prompt:
-        "Klikni oba dugmeta po nekoliko puta. Gornje broji samo u konzoli, donje i na ekranu. Onda klikni donje, pa gornje: gornje se \"vrati\" na 0, jer svako novo crtanje ponovo izvrši `let klikova = 0`.",
+        "Klikni oba dugmeta po nekoliko puta. Gornje broji samo u konzoli, donje i na ekranu. Primeti i da klik na donje ne osveži gornje: React ponovo crta samo komponentu čiji se state promenio (`SaStateom`), pa gornje i dalje pokazuje 0, a u konzoli nastavlja da broji.",
       lang: "tsx",
       code: `import { useState } from "react"
 

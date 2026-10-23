@@ -130,11 +130,11 @@ Evo kompletnog obrasca iz kontakt forme na PlazaHome sajtu:`,
       steps: [
         {
           lines: 1,
-          md: "`async function`: samo unutar ovakve funkcije sme da se koristi `await` (linija 16).",
+          md: "`async function`: samo unutar ovakve funkcije sme da se koristi `await` (linija 41).",
         },
         {
           lines: 14,
-          md: "Pre slanja status postaje `\"sending\"`. Zašto pre? Jer zahtev traje, a korisnik mora odmah da vidi da se nešto dešava (dugme \"Šalje se...\"), inače klikne još pet puta.",
+          md: "Pre slanja status postaje `\"sending\"`. Zašto pre? Jer zahtev traje, a korisnik mora odmah da vidi da se nešto dešava (dugme pokaže \"Šaljem…\" i isključi se), inače klikne još pet puta.",
         },
         {
           lines: [16, 20],
@@ -146,7 +146,7 @@ Evo kompletnog obrasca iz kontakt forme na PlazaHome sajtu:`,
         },
         {
           lines: [15, 26],
-          md: "Ceo poziv je u `try`. Ako nema interneta (`fetch` baci grešku) ili server vrati grešku (`throw` na liniji 21), izvršavanje skače u `catch`, a korisnik vidi poruku o grešci umesto da forma \"visi\" zauvek.",
+          md: "Ceo poziv je u `try`. Ako nema interneta (`fetch` baci grešku) ili server vrati grešku (`throw` na liniji 46), izvršavanje skače u `catch`, a korisnik vidi poruku o grešci umesto da forma \"visi\" zauvek.",
         },
       ],
     },
@@ -179,7 +179,7 @@ Evo kompletnog obrasca iz kontakt forme na PlazaHome sajtu:`,
       kind: "prose",
       md: `### \`Promise.all\`: više zahteva odjednom
 
-Kad ti treba više nezavisnih stvari (studio, termini, rezervacije), nema razloga da čekaš jednu pa drugu. \`Promise.all([...])\` prima niz Promise-a, pokrene ih **istovremeno** i čeka da se **svi** ispune. Rezultat je niz vrednosti, istim redom.`,
+Kad ti treba više nezavisnih stvari (studio, termini, rezervacije), nema razloga da čekaš jednu pa drugu. \`Promise.all([...])\` prima niz Promise-a i čeka da se **svi** ispune. Zahtevi krenu **istovremeno**, čim se u nizu pozovu funkcije, a čeka se samo jednom. Rezultat je niz vrednosti, istim redom.`,
     },
     {
       kind: "code",
@@ -233,7 +233,7 @@ const fetchAll = async (studioId: StudioId): Promise<Fetched> => {
         },
         {
           lines: [11, 18],
-          md: "`Promise.all` pokreće šest zahteva istovremeno. Ako svaki traje 300 ms, sve stigne za oko 300 ms, a ne za 1,8 sekundi. Rezultati se destrukturiraju u šest promenljivih, istim redom kao pozivi.",
+          md: "Šest zahteva kreće istovremeno (čim se napravi niz), a `Promise.all` čeka sve. Ako svaki traje 300 ms, sve stigne za oko 300 ms, a ne za 1,8 sekundi. Rezultati se destrukturiraju u šest promenljivih, istim redom kao pozivi.",
         },
         {
           lines: [12, 17],

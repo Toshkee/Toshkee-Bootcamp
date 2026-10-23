@@ -331,7 +331,7 @@ export const useStudioStore = create<StudioState>()((set) => ({
         },
         {
           lines: [21, 24],
-          md: "`leave` vrati temu na neutralnu i upiše `null`. Namerno **ne** zove `remember`: posle povratka na ulazni ekran, poslednji izbor ostaje zapamćen, baš kao što kaže komentar u liniji 5.",
+          md: "`leave` vrati temu na neutralnu i upiše `null`. Namerno **ne** zove `remember`: posle povratka na ulazni ekran, poslednji izbor ostaje zapamćen, baš kao što kaže komentar u liniji 47.",
         },
       ],
     },

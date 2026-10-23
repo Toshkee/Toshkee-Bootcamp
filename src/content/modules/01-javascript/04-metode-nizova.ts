@@ -17,7 +17,7 @@ Sve to može da se napiše i petljom \`for\`, ali metode imaju dve velike predno
 1. **Kažu ŠTA radiš, a ne KAKO.** \`termini.filter(jeSlobodan)\` se čita kao rečenica. Petlja sa brojačem \`i\` mora da se prati red po red.
 2. **Ne menjaju original** (osim \`sort\`, o tome niže). Vraćaju nov niz, što je baš ono što React i Zustand traže.
 
-Sve metode u ovoj lekciji primaju **callback**: funkciju koju one pozovu za svaki element.`,
+Skoro sve metode u ovoj lekciji primaju **callback**: funkciju koju one pozovu za svaki element.`,
     },
     {
       kind: "callout",
@@ -136,9 +136,9 @@ STUDIJI.includes("boks")      // false`,
 
 - negativan broj → \`a\` ide pre \`b\`
 - pozitivan broj → \`b\` ide pre \`a\`
-- \`0\` → svejedno
+- \`0\` → ostaju u redosledu u kom su bili
 
-Za brojeve: \`(a, b) => a - b\` je rastuće, \`(a, b) => b - a\` opadajuće. Za tekst: \`a.localeCompare(b)\`, koji ispravno sortira i "Š" i "Đ".`,
+Za brojeve: \`(a, b) => a - b\` je rastuće, \`(a, b) => b - a\` opadajuće. Za tekst: \`a.localeCompare(b)\`. Bez navedenog jezika važe pravila podrazumevanog jezika (browsera ili sistema), pa za srpsku latinicu (C pre Č, S pre Š, L pre Lj) dodaj jezik: \`a.localeCompare(b, "sr-Latn")\`.`,
     },
     {
       kind: "callout",
@@ -237,7 +237,7 @@ export const fixedHolders = (
         },
         {
           lines: 15,
-          md: "**sort**: po abecedi, po srpskim pravilima (`'sr'`), pa \"Đurović\" ide posle \"Dragić\". Ovde je `sort` bezbedan, jer sortira niz koji je upravo napravio `map`, a ne nečiji original.",
+          md: "**sort**: po abecedi, uz jezik `'sr'`. Pazi: `'sr'` je srpska **ćirilica**, pa latinična imena dobiju opšti redosled: \"Đurović\" jeste posle \"Dragić\", ali \"Čabrić\" ide pre \"Cvetić\". Tačnu latiničnu abecedu daje `'sr-Latn'`, koji `byName` u `members.ts` već koristi. Ovde je `sort` bezbedan, jer sortira niz koji je upravo napravio `map`, a ne nečiji original.",
         },
       ],
     },

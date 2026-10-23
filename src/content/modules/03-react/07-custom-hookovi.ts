@@ -312,7 +312,7 @@ Izvedene vrednosti računaš pri svakom crtanju i to je skoro uvek sasvim dovolj
 
 Kad isti par \`useState\` + \`useEffect\` počneš da kopiraš iz komponente u komponentu, vreme je za **custom hook**. To je obična funkcija:
 
-- ime joj počinje sa **\`use\`** (tako React i editor znaju da u njoj važe pravila hook-ova),
+- ime joj počinje sa **\`use\`** (tako i ti i linter u editoru znate da u njoj važe pravila hook-ova),
 - unutra poziva druge hook-ove,
 - vraća šta god treba: vrednost, niz \`[vrednost, funkcija]\`, objekat.`,
     },
@@ -323,7 +323,7 @@ Kad isti par \`useState\` + \`useEffect\` počneš da kopiraš iz komponente u k
       lang: "ts",
       startLine: 1,
       intro:
-        "Ceo fajl. Ekrani kao BookingsScreen samo napišu `const now = useNow()` i dobiju vreme koje se samo osvežava, pa se dugme \"Otkaži\" ugasi tačno kad istekne rok za otkazivanje.",
+        "Ceo fajl. Ekrani kao BookingsScreen samo napišu `const now = useNow()` i dobiju vreme koje se samo osvežava, pa se dugme \"Otkaži\" ugasi kad istekne rok za otkazivanje (najkasnije 30 sekundi posle).",
       code: `import { useEffect, useState } from 'react'
 
 /**

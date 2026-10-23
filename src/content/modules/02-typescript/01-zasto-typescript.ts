@@ -88,7 +88,7 @@ export const weekLockId = (
   trainingType: TrainingType,
 ) => \`\${uid}_\${studioId}_\${weekKey}_\${trainingType}\`
 
-/** Slot šablona iz seed-a: \`1_0800\` (ISO dan, vreme). Slotovi iz panela dobijaju auto ID. */
+/** Slot šablona iz seed-a: \`1_0800\` (ISO dan, vrijeme). Slotovi iz panela dobijaju auto ID. */
 export const templateSlotId = (weekday: number, time: string) =>
   \`\${weekday}_\${time.replace(':', '')}\`
 `,
@@ -209,7 +209,7 @@ console.log(poruka)
         },
         {
           q: "Šta je tip promenljive `x`?",
-          code: "const x = `${42}_termin`",
+          code: "function oznaka(broj: number) {\n  const x = `${broj}_termin`\n}",
           codeLang: "ts",
           options: ["`number`", "`string`", "`any`", "Greška, mora se napisati tip"],
           answer: 1,

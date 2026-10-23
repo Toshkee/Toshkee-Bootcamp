@@ -180,7 +180,7 @@ Neke props ne pišeš kao atribut, nego **između otvarajućeg i zatvarajućeg t
 {booking.source === 'fixed' && <Badge tone="muted">{t.bookings.fixed}</Badge>}`,
       highlight: [2, 5],
       caption:
-        "Sve između `<Badge>` i `</Badge>` stiže kao `children`. Primeti i da `icon` prima ceo JSX element: props mogu da budu bilo koja vrednost, pa i komponenta.",
+        "Sve između `<Badge>` i `</Badge>` stiže kao `children`. Primeti i da `icon` prima ceo JSX element: props mogu da budu bilo koja vrednost, pa i JSX.",
     },
     {
       kind: "prose",

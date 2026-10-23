@@ -12,7 +12,7 @@ const lesson: Lesson = {
       kind: "prose",
       md: `Otvori ReformStudio i dodirni tab **Raspored**. Adresa se promeni iz \`/pocetna\` u \`/raspored\`, ekran se zameni, a stranica se **ne učitava ponovo**: nema belog bljeska, tab bar ostaje na mestu, a podaci iz store-a su i dalje tu. Pritisni strelicu nazad u browseru i vratiš se na Početnu, opet bez učitavanja.
 
-To je **rutiranje na klijentu** (client-side routing). ReformStudio je **SPA** (Single Page Application): server šalje samo jednu HTML stranicu, \`index.html\`, i jedan JavaScript paket. Sve "stranice" su zapravo React komponente, a biblioteka **React Router** gleda adresu i odlučuje koju od njih da nacrta.`,
+To je **rutiranje na klijentu** (client-side routing). ReformStudio je **SPA** (Single Page Application): server šalje samo jednu HTML stranicu, \`index.html\`, i JavaScript fajlove aplikacije. Sve "stranice" su zapravo React komponente, a biblioteka **React Router** gleda adresu i odlučuje koju od njih da nacrta.`,
     },
     {
       kind: "callout",
@@ -308,7 +308,7 @@ export const MemberScreen = () => {
       kind: "callout",
       tone: "tip",
       title: "Adresu može da upiše bilo ko",
-      md: "`:uid` iz adrese ne mora da postoji u bazi: link je mogao da zastari, a neko je mogao i sam da ga izmisli. Zato `MemberScreen` traži člana sa `members.find((member) => member.id === uid)`, a ekran detalja uvek ima granu za \"nije pronađeno\". Bez nje bi `user.name` pukao na `undefined`.",
+      md: "`:uid` iz adrese ne mora da postoji u bazi: link je mogao da zastari, a neko je mogao i sam da ga izmisli. Zato `MemberScreen` traži člana sa `members.find((member) => member.id === uid)`, a ekran detalja uvek ima granu za \"nije pronađeno\". Bez nje bi `user.firstName` pukao na `undefined`.",
     },
     {
       kind: "prose",

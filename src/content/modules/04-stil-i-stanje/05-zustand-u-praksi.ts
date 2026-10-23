@@ -126,7 +126,7 @@ export const useClanarina = create<ClanarinaState>()((set) => ({
         },
         {
           lines: [3, 4],
-          md: "`run` je brojač van stanja, obična promenljiva unutar funkcije koja pravi store. Svako učitavanje dobije svoj broj, a `mine` ga zapamti. Zašto, vidi se u liniji 10.",
+          md: "`run` je brojač van stanja, obična promenljiva unutar funkcije koja pravi store. Svako učitavanje dobije svoj broj, a `mine` ga zapamti. Zašto, vidi se u liniji 249.",
         },
         {
           lines: [5, 7],
@@ -230,7 +230,7 @@ Optimistično ima smisla za male izmene koje skoro uvek uspeju: prekidač u pode
         },
         {
           lines: [9, 10],
-          md: "Koraci 1 i 2: zapamti prethodno stanje, pa odmah upiši novo. Ugnježdeni objekat se spaja ručno, `{ ...previous, ...patch }`. Ekran se osveži pre nego što išta stigne do baze.",
+          md: "Koraci 1 i 2: zapamti prethodno stanje, pa odmah upiši novo. Ugnežđeni objekat se spaja ručno, `{ ...previous, ...patch }`. Ekran se osveži pre nego što išta stigne do baze.",
         },
         {
           lines: [11, 13],
@@ -366,7 +366,7 @@ Probaj: otvori DevTools (Cmd + Option + I), pa **Application** → **Local Stora
       id: "zustand-praksa-peskovnik",
       title: "persist na delu",
       prompt:
-        "Promeni temu i podsetnik. Zatim izmeni bilo šta u kodu, na primer tekst dugmeta: pregled se pokreće iz početka i store se pravi ponovo, a vrednosti ostaju, jer ih `persist` pročita iz `localStorage`-a. Onda u opcije dodaj `partialize: (s) => ({ tema: s.tema })` i gledaj kako `danaPre` nestane iz JSON-a.",
+        "Promeni temu i podsetnik. Zatim izmeni bilo šta u kodu, na primer tekst dugmeta: pregled se pokreće iz početka i store se pravi ponovo, a vrednosti ostaju, jer ih `persist` pročita iz `localStorage`-a. Onda u opcije dodaj `partialize: (s) => ({ tema: s.tema })`, klikni bilo koje dugme i gledaj kako `danaPre` nestane iz JSON-a.",
       lang: "tsx",
       code: `import { create } from "zustand"
 import { persist } from "zustand/middleware"

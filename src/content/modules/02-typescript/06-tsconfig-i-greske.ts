@@ -71,7 +71,7 @@ Ali prvo: ko odlučuje šta je greška? **\`tsconfig.json\`**, konfiguracioni fa
         },
         {
           lines: 17,
-          md: "**Najvažnija linija.** `strict: true` uključuje paket provera, među kojima su `noImplicitAny` (parametar bez tipa je greška) i `strictNullChecks` (`null` i `undefined` se ne mogu koristiti kao da su prave vrednosti). Bez nje bi pola grešaka iz ovog modula prošlo tiho.",
+          md: "**Najvažnija linija.** `strict: true` uključuje paket provera, među kojima su `noImplicitAny` (parametar bez tipa je greška) i `strictNullChecks` (`null` i `undefined` se ne mogu koristiti kao da su prave vrednosti). Sa isključenim `strict` bi pola grešaka iz ovog modula prošlo tiho. Od TypeScript-a 6 `strict` je uključen i kad ga ne napišeš (ReformStudio ima TS 7), ali u projektima na TS 5 (PlazaHome, Pasted) bez ove linije ga nema.",
         },
         {
           lines: [18, 21],
@@ -100,7 +100,7 @@ Ali prvo: ko odlučuje šta je greška? **\`tsconfig.json\`**, konfiguracioni fa
 Editor proverava samo fajlove koje imaš otvorene. Da proveriš **ceo projekat**, koristi kompajler \`tsc\` sa opcijom \`--noEmit\` (*samo proveri, ne pravi fajlove*). U većini projekata postoji i skripta za to:
 
 - PlazaHome: \`npm run typecheck\` (pokreće \`tsc --noEmit\`)
-- ReformStudio: \`npm run typecheck\` (pokreće \`tsc -b\`, koji prolazi kroz sve reference)
+- ReformStudio: \`npm run typecheck\` (pokreće \`tsc -b\`, koji prolazi kroz sve reference). Golo \`npx tsc --noEmit\` u korenu ReformStudija ne proverava ništa i ćuti, jer glavni \`tsconfig.json\` ima \`"files": []\`.
 
 Ovo vredi pokrenuti **posle svake veće izmene koju napravi AI**, pre nego što commit-uješ.`,
     },
@@ -171,7 +171,7 @@ Poruke izgledaju zastrašujuće, ali uvek imaju isti oblik. Pogledaj grešku iz 
 1. **Gde?** \`src/lib/primer.ts\`, linija 12. U editoru klikni na putanju (Cmd+klik) i otvoriće se baš to mesto.
 2. **Šta je dato, a šta očekivano?** Skoro svaka poruka ima oblik *„X nije dodeljivo Y”*. Ovde je dato \`string | undefined\`, a funkcija očekuje \`string\`.
 3. **Zašto?** Uvučeni red je najprecizniji: problem je deo \`undefined\`. Kad poruka ima više uvučenih redova, **poslednji** je obično srž.
-4. **Šta je stvarni problem?** \`cancelledAt\` je opciono polje. Rešenje nije da se TypeScript ućutka, nego da se obradi slučaj kad polja nema.
+4. **Šta je stvarni problem?** \`paidAt\` je opciono polje. Rešenje nije da se TypeScript ućutka, nego da se obradi slučaj kad polja nema.
 
 ### Šest grešaka koje ćeš viđati najčešće
 
@@ -220,7 +220,7 @@ if (typeof u === "object" && u !== null && "studio" in u && isStudioId(u.studio)
       kind: "prose",
       md: `### Izlazi za nuždu: as, !, @ts-ignore
 
-Postoje četiri načina da se TypeScript **ućutka** umesto da se problem reši. Svaki AI asistent ih ponekad posegne kad ne može brzo da popravi grešku:`,
+Postoje četiri načina da se TypeScript **ućutka** umesto da se problem reši. Svaki AI asistent ponekad posegne za njima kad ne može brzo da popravi grešku:`,
     },
     {
       kind: "code",
@@ -231,7 +231,7 @@ const studio = param as StudioId                  // as "veruj mi, ovo je Studio
 posaljiPodsetnik(clan.telefon, 3)
 const podaci: any = await res.json()              // any "isključi proveru"`,
       caption:
-        "Sva četiri briše **poruku**, a ne **grešku**. Ako je `clan` stvarno `undefined`, aplikacija i dalje pukne, samo bez upozorenja.",
+        "Sva četiri brišu **poruku**, a ne **grešku**. Ako je `clan` stvarno `undefined`, aplikacija i dalje pukne, samo bez upozorenja.",
     },
     {
       kind: "callout",
@@ -239,7 +239,7 @@ const podaci: any = await res.json()              // any "isključi proveru"`,
       title: "Kad AI „popravi” grešku sa as any",
       md: `Ako u predlogu izmene vidiš novi \`as any\`, \`!\` ili \`@ts-ignore\`, zaustavi se i pitaj: *„Koji je pravi uzrok greške? Popravi ga bez as/any/!”*. Skoro uvek postoji pravo rešenje: provera \`null\`-a, ispravan tip, type guard.
 
-Za poređenje: u \`src\` i \`functions/src\` tvog ReformStudija nema nijednog \`any\` ni \`@ts-ignore\`. Postoji nekoliko pažljivo izabranih \`as\` (npr. \`snapshot.data() as T\` u Firestore converter-u, gde TypeScript zaista ne može da zna šta je u bazi). To je dobar standard.`,
+Za poređenje: u \`src\` i \`functions/src\` tvog ReformStudija nema nijednog \`any\` ni \`@ts-ignore\`. \`as\` ima (pedesetak), ali skoro svi su na granici sa spoljnim podacima, gde TypeScript zaista ne može da zna šta stiže: \`snapshot.data() as T\` u Firestore converter-u (šta je u bazi), \`location.state\`, uhvaćene greške. To je dobar standard.`,
     },
     {
       kind: "callout",
@@ -463,7 +463,7 @@ console.log(parseTermin('{"vreme": 18}'))
             "Automatsko popravljanje grešaka",
           ],
           answer: 1,
-          why: "`strict` je skup opcija (`noImplicitAny`, `strictNullChecks` i druge). Bez njega bi TS7006 i TS18047 greške tiho prolazile.",
+          why: "`strict` je skup opcija (`noImplicitAny`, `strictNullChecks` i druge). Sa `\"strict\": false` bi TS7006 i TS18047 greške tiho prolazile. Od TypeScript-a 6 `strict` je podrazumevano uključen, a u verziji 5 mora da se napiše.",
         },
         {
           q: "U `tsconfig`-u piše `\"paths\": { \"@/*\": [\"./src/*\"] }`. Šta znači `import { t } from '@/i18n'`?",
@@ -505,7 +505,7 @@ console.log(parseTermin('{"vreme": 18}'))
     {
       id: "fc-ts-greske-1",
       front: "Kako proveriti tipove u celom projektu iz terminala?",
-      back: "`npx tsc --noEmit` (ili `-p tsconfig.app.json` za određen config), odnosno `npm run typecheck` ako projekat ima tu skriptu. Bez ispisa = nula grešaka.",
+      back: "`npx tsc --noEmit` (ili `-p tsconfig.app.json` za određen config), odnosno `npm run typecheck` ako projekat ima tu skriptu. Bez ispisa = nula grešaka. Izuzetak: u ReformStudiju golo `npx tsc --noEmit` ne proverava ništa (`\"files\": []`), pa tamo koristi skriptu ili `-p`.",
     },
     {
       id: "fc-ts-greske-2",
