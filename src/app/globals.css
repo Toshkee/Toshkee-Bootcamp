@@ -1,0 +1,326 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------- Tokeni ---------- */
+:root {
+  --bg: #fbfbfa;
+  --bg-elev: #ffffff;
+  --bg-subtle: #f3f3f1;
+  --bg-sunken: #efefec;
+  --line: rgb(0 0 0 / 0.08);
+  --line-strong: rgb(0 0 0 / 0.14);
+  --fg: #0a0a0b;
+  --fg-muted: #55555c;
+  --fg-faint: #9a9aa2;
+  --success: #059669;
+  --danger: #dc2626;
+  --warn: #b45309;
+  --info: #2563eb;
+  --hue: #4f8ff7;
+  --shadow-lg: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px -6px rgb(0 0 0 / 0.1);
+  --code-bg: #ffffff;
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #08080a;
+  --bg-elev: #111114;
+  --bg-subtle: #17171b;
+  --bg-sunken: #0c0c0e;
+  --line: rgb(255 255 255 / 0.07);
+  --line-strong: rgb(255 255 255 / 0.13);
+  --fg: #f4f4f5;
+  --fg-muted: #a1a1aa;
+  --fg-faint: #63636b;
+  --success: #34d399;
+  --danger: #f87171;
+  --warn: #fbbf24;
+  --info: #60a5fa;
+  --shadow-lg: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 12px 32px -8px rgb(0 0 0 / 0.6);
+  --code-bg: #0d0d10;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-elev: var(--bg-elev);
+  --color-subtle: var(--bg-subtle);
+  --color-sunken: var(--bg-sunken);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-muted: var(--fg-muted);
+  --color-faint: var(--fg-faint);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-warn: var(--warn);
+  --color-info: var(--info);
+  --color-hue: var(--hue);
+  --color-code: var(--code-bg);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
+  --font-display: var(--font-instrument-serif), Georgia, serif;
+  --shadow-card: var(--shadow-lg);
+  --animate-fade-up: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-pop: pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Osnova ---------- */
+html {
+  background: var(--bg);
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--hue) 35%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--hue) 80%, var(--fg));
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Tanji, diskretni scrollbar-ovi */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+/* Boja modula kao tekst, čitljiva i u svetloj temi */
+.text-hue-strong {
+  color: color-mix(in oklab, var(--hue) 78%, var(--fg));
+}
+
+.bg-hue-soft {
+  background: color-mix(in oklab, var(--hue) 12%, transparent);
+}
+
+.border-hue-soft {
+  border-color: color-mix(in oklab, var(--hue) 30%, transparent);
+}
+
+/* Suptilna tačkasta pozadina za hero sekcije */
+.dot-grid {
+  background-image: radial-gradient(var(--line-strong) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* ---------- Prose (markdown u lekcijama) ---------- */
+.prose-lesson {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: color-mix(in oklab, var(--fg) 88%, var(--bg));
+}
+.prose-lesson > * + * {
+  margin-top: 1em;
+}
+.prose-lesson h3 {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  margin-top: 2.2em;
+  margin-bottom: 0.2em;
+}
+.prose-lesson h4 {
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--fg);
+  margin-top: 1.6em;
+}
+.prose-lesson strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+.prose-lesson em {
+  font-style: italic;
+}
+.prose-lesson a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--hue) 60%, transparent);
+  text-underline-offset: 3px;
+}
+.prose-lesson ul,
+.prose-lesson ol {
+  padding-left: 1.25em;
+}
+.prose-lesson ul {
+  list-style: none;
+}
+.prose-lesson ul > li {
+  position: relative;
+}
+.prose-lesson ul > li::before {
+  content: "";
+  position: absolute;
+  left: -1em;
+  top: 0.72em;
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  background: color-mix(in oklab, var(--hue) 70%, var(--fg-faint));
+}
+.prose-lesson ol {
+  list-style: decimal;
+}
+.prose-lesson ol > li::marker {
+  color: var(--fg-faint);
+  font-variant-numeric: tabular-nums;
+}
+.prose-lesson li + li {
+  margin-top: 0.35em;
+}
+.md-inline code,
+.prose-lesson code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  padding: 0.12em 0.38em;
+  border-radius: 6px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--line);
+  color: var(--fg);
+  white-space: break-spaces;
+}
+.prose-lesson pre {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  background: var(--code-bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+}
+.prose-lesson pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: inherit;
+}
+.prose-lesson table {
+  width: 100%;
+  font-size: 0.95rem;
+  border-collapse: collapse;
+}
+.prose-lesson th,
+.prose-lesson td {
+  border-bottom: 1px solid var(--line);
+  padding: 0.5em 0.75em 0.5em 0;
+  text-align: left;
+}
+.prose-lesson th {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.prose-tight {
+  font-size: 0.97rem;
+  line-height: 1.65;
+}
+.prose-tight > * + * {
+  margin-top: 0.6em;
+}
+
+/* ---------- Shiki ---------- */
+.shiki,
+.shiki span {
+  color: var(--shiki-light);
+  background-color: transparent !important;
+}
+.dark .shiki,
+.dark .shiki span {
+  color: var(--shiki-dark);
+}
+.tok {
+  color: var(--shiki-light);
+}
+.dark .tok {
+  color: var(--shiki-dark);
+}
+.code-static pre {
+  padding: 1rem 0;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+.code-static code {
+  display: grid;
+  min-width: max-content;
+  counter-reset: line;
+}
+.code-static .line {
+  padding: 0 1.25rem 0 0;
+  border-left: 2px solid transparent;
+}
+.code-static .line::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 2.75rem;
+  padding-right: 1rem;
+  text-align: right;
+  color: var(--fg-faint);
+  opacity: 0.6;
+  user-select: none;
+}
+.code-static .line.hl {
+  background: color-mix(in oklab, var(--hue) 12%, transparent);
+  border-left-color: var(--hue);
+}
+.code-static .line.hl::before {
+  color: var(--hue);
+  opacity: 1;
+}
+
+/* Monaco: bez okvira fokusa, uklapa se u karticu */
+.monaco-editor .margin,
+.monaco-editor,
+.monaco-editor-background {
+  background-color: var(--code-bg) !important;
+}
+.monaco-editor .focused {
+  outline: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
