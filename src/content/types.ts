@@ -70,9 +70,15 @@ export interface ExerciseTest {
   /** Šta test proverava, na srpskom, npr. "saberi(2, 3) vraća 5" */
   name: string;
   /**
-   * JavaScript koji se izvršava posle tvog koda, u istom scope-u.
+   * JavaScript koji se izvršava posle tvog koda, u istom scope-u (testovi su async, `await` radi).
    * Dostupno: expect(x).toBe(y) / toEqual / toBeTruthy / toBeFalsy / toContain / toHaveLength / toThrow / toBeTypeOf,
    * i `logs` (niz stringova svega što je ispisano preko console.log).
+   *
+   * U "tsx" vežbama još i: `await render(App, props?)`, `screen.getByText / getAllByText / queryByText /
+   * getByRole(role, { name }) / getAllByRole / queryByRole / getByLabelText / getByPlaceholderText / getByTestId`,
+   * `await click(el)`, `await type(el, "tekst")`, `await select(el, "vrednost")`, `await tick()`, `await sleep(ms)`,
+   * i matcher-i toBeInTheDocument / toHaveTextContent / toHaveValue / toBeChecked / toBeDisabled.
+   * Posle svakog testa sve se demontira, pa svaki test počinje sa render(...).
    */
   code: string;
 }
@@ -83,7 +89,10 @@ export interface ExerciseBlock {
   id: string;
   title: string;
   prompt: Markdown;
-  lang: "ts" | "js";
+  /** "tsx" = React vežba: kod se crta u živom pregledu, a `import ... from "react"` radi. */
+  lang: "ts" | "js" | "tsx";
+  /** Samo za "tsx": koja komponenta se prikazuje u pregledu. Default: "App". */
+  preview?: string;
   starter: string;
   solution: string;
   /** Ako je true, vežba prolazi samo ako TypeScript ne prijavljuje nijednu grešku. Default: true za "ts". */
@@ -92,6 +101,18 @@ export interface ExerciseBlock {
   hints: Markdown[];
   /** Kratko objašnjenje posle rešavanja: zašto je rešenje takvo. */
   explanation?: Markdown;
+}
+
+/** Peskovnik: React kod sa živim pregledom, bez testova. Za igranje i eksperimente. */
+export interface PlaygroundBlock {
+  kind: "playground";
+  id: string;
+  title: string;
+  prompt?: Markdown;
+  lang: "tsx";
+  code: string;
+  /** Koja komponenta se prikazuje. Default: "App". */
+  preview?: string;
 }
 
 export interface QuizQuestion {
@@ -142,6 +163,7 @@ export type Block =
   | CodeBlock
   | FromYourCodeBlock
   | ExerciseBlock
+  | PlaygroundBlock
   | QuizBlock
   | TerminalBlock;
 

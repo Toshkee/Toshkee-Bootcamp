@@ -9,6 +9,7 @@ import {
   Loader2,
   Play,
   RotateCcw,
+  Shapes,
   Sparkles,
   TerminalSquare,
   X,
@@ -20,10 +21,13 @@ import type { ExerciseTest } from "@/content/types";
 import { cn } from "@/lib/cn";
 import { useProgress } from "@/lib/progress";
 import { runInWorker } from "@/lib/runner/browser";
-import { buildProgram, type RunResult } from "@/lib/runner/harness";
+import { buildProgram, type LogLine, type RunResult } from "@/lib/runner/harness";
+import { runReactInFrame } from "@/lib/runner/react-browser";
+import { rewriteModules } from "@/lib/runner/react-harness";
 import { useIsClient } from "@/lib/use-is-client";
 import { Burst } from "./burst";
 import { compileModel, configureMonaco, currentMonacoTheme, type TsProblem } from "./monaco-setup";
+import { ReactPreview } from "./react-preview";
 
 interface Outcome extends RunResult {
   problems: TsProblem[];
@@ -35,6 +39,8 @@ export function Exercise({
   id,
   number,
   title,
+  mode = "exercise",
+  previewName = "App",
   lang,
   starter,
   solution,
@@ -48,7 +54,10 @@ export function Exercise({
   id: string;
   number: number;
   title: string;
-  lang: "ts" | "js";
+  /** "playground" = peskovnik: samo editor i živi pregled, bez testova i rešenja. */
+  mode?: "exercise" | "playground";
+  previewName?: string;
+  lang: "ts" | "js" | "tsx";
   starter: string;
   solution: string;
   solutionHtml: string;
@@ -74,9 +83,28 @@ export function Exercise({
   const [attempts, setAttempts] = useState(0);
   const [celebrate, setCelebrate] = useState(0);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const previewTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const [previewJs, setPreviewJs] = useState<string | null>(null);
+  const [previewLogs, setPreviewLogs] = useState<LogLine[]>([]);
 
+  const isReact = lang === "tsx";
+  const isPlayground = mode === "playground";
   const solved = ready && !!solvedAt;
-  const needNoTypeErrors = requireNoTypeErrors ?? lang === "ts";
+  const needNoTypeErrors = requireNoTypeErrors ?? lang !== "js";
+
+  /** Kompajlira trenutni kod za živi pregled. Kod sa sintaksnom greškom preskačemo, pa ostaje poslednji ispravan pregled. */
+  const refreshPreview = useCallback(async () => {
+    const monaco = monacoRef.current;
+    const model = editorRef.current?.getModel();
+    if (!monaco || !model || !isReact) return;
+    const { js } = await compileModel(monaco, model, lang);
+    try {
+      new Function("__require", rewriteModules(js));
+    } catch {
+      return;
+    }
+    setPreviewJs(js);
+  }, [isReact, lang]);
 
   const run = useCallback(async () => {
     const monaco = monacoRef.current;
@@ -85,7 +113,8 @@ export function Exercise({
     setRunning(true);
     try {
       const { js, problems } = await compileModel(monaco, model, lang);
-      const result = await runInWorker(buildProgram(js, tests));
+      if (isReact) setPreviewJs(js);
+      const result = isReact ? await runReactInFrame(js, tests) : await runInWorker(buildProgram(js, tests));
       const pass =
         !result.timedOut &&
         !result.runtimeError &&
@@ -102,7 +131,7 @@ export function Exercise({
     } finally {
       setRunning(false);
     }
-  }, [id, lang, markSolved, needNoTypeErrors, running, tests]);
+  }, [id, isReact, lang, markSolved, needNoTypeErrors, running, tests]);
 
   const runRef = useRef(run);
   useEffect(() => {
@@ -112,6 +141,7 @@ export function Exercise({
   const reset = () => {
     editorRef.current?.setValue(starter);
     setOutcome(null);
+    void refreshPreview();
   };
 
   const insertSolution = () => {
@@ -126,11 +156,20 @@ export function Exercise({
       {/* Zadatak */}
       <div className="px-5 pt-5 pb-4 sm:px-6">
         <div className="mb-3 flex items-center gap-2.5">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-fg px-2.5 py-0.5 text-[11.5px] font-semibold tracking-wide text-bg">
-            <KeyRound size={11.5} strokeWidth={2.5} />
-            VEŽBA {number}
-          </span>
-          <StatusPill solved={solved} outcome={outcome} />
+          {isPlayground ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-hue px-2.5 py-0.5 text-[11.5px] font-semibold tracking-wide text-bg">
+              <Shapes size={11.5} strokeWidth={2.5} />
+              PESKOVNIK
+            </span>
+          ) : (
+            <>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-fg px-2.5 py-0.5 text-[11.5px] font-semibold tracking-wide text-bg">
+                <KeyRound size={11.5} strokeWidth={2.5} />
+                VEŽBA {number}
+              </span>
+              <StatusPill solved={solved} outcome={outcome} />
+            </>
+          )}
         </div>
         <h3 className="mb-2 text-[1.35rem] font-semibold tracking-tight">{title}</h3>
         <div className="text-[15.5px]">{prompt}</div>
@@ -160,14 +199,16 @@ export function Exercise({
             <span
               className={cn(
                 "rounded px-1 py-px text-[10px] font-bold",
-                lang === "ts" ? "bg-[#3178c6] text-white" : "bg-[#f7df1e] text-black",
+                lang === "js" ? "bg-[#f7df1e] text-black" : lang === "tsx" ? "bg-[#22d3ee] text-black" : "bg-[#3178c6] text-white",
               )}
             >
               {lang.toUpperCase()}
             </span>
-            vezba.{lang}
+            {isReact ? `${previewName}.tsx` : `vezba.${lang}`}
           </span>
           <div className="ml-auto flex items-center gap-0.5">
+            {!isPlayground && (
+              <>
             <ToolbarButton
               onClick={() => setHintsShown((n) => Math.min(hints.length, n + 1))}
               disabled={hintsShown >= hints.length}
@@ -182,9 +223,13 @@ export function Exercise({
               <Sparkles size={14} />
               <span className="hidden sm:inline">Rešenje</span>
             </ToolbarButton>
+              </>
+            )}
             <ToolbarButton onClick={reset} title="Vrati početni kod">
               <RotateCcw size={14} />
+              {isPlayground && <span className="hidden sm:inline">Vrati</span>}
             </ToolbarButton>
+            {!isPlayground && (
             <button
               type="button"
               onClick={run}
@@ -195,6 +240,7 @@ export function Exercise({
               Pokreni
               <span className="hidden items-center gap-0.5 rounded bg-bg/15 px-1 py-px font-mono text-[10.5px] sm:flex">⌘↵</span>
             </button>
+            )}
           </div>
         </div>
 
@@ -202,7 +248,7 @@ export function Exercise({
           <Editor
             height={height}
             path={`file:///vezbe/${id}.${lang}`}
-            defaultLanguage={lang === "ts" ? "typescript" : "javascript"}
+            defaultLanguage={lang === "js" ? "javascript" : "typescript"}
             defaultValue={useProgress.getState().drafts[id] ?? starter}
             theme={currentMonacoTheme()}
             beforeMount={configureMonaco}
@@ -211,12 +257,19 @@ export function Exercise({
               editorRef.current = ed;
               monacoRef.current = monaco;
               setHeight(editorHeight(ed.getValue()));
-              ed.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => runRef.current());
+              ed.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () =>
+                isPlayground ? void refreshPreview() : runRef.current(),
+              );
+              void refreshPreview();
             }}
             onChange={(value = "") => {
               setHeight(editorHeight(value));
               clearTimeout(saveTimer.current);
               saveTimer.current = setTimeout(() => saveDraft(id, value), 400);
+              if (isReact) {
+                clearTimeout(previewTimer.current);
+                previewTimer.current = setTimeout(() => void refreshPreview(), 600);
+              }
             }}
             options={{
               fontFamily: monoFont(),
@@ -264,7 +317,25 @@ export function Exercise({
         </div>
       )}
 
+      {isReact && (
+        <div className="border-t border-line bg-subtle/30 px-4 pt-3 pb-4 sm:px-5">
+          <div className="mb-2 flex items-center justify-between text-[12px] text-faint">
+            <span className="font-medium tracking-wide uppercase">Pregled</span>
+            <span>osvežava se dok kucaš</span>
+          </div>
+          <ReactPreview js={previewJs} name={previewName} onLogs={setPreviewLogs} />
+        </div>
+      )}
+
       {/* Rezultat */}
+      {isPlayground ? (
+        previewLogs.length > 0 && (
+          <div className="border-t border-line px-5 py-4 sm:px-6">
+            <div className="mb-2 text-[12px] font-medium tracking-wide text-faint uppercase">Konzola</div>
+            <ConsoleLines logs={previewLogs} />
+          </div>
+        )
+      ) : (
       <div className="border-t border-line">
         <div className="flex items-center gap-1 px-3 pt-2 sm:px-4">
           <TabButton active={tab === "tests"} onClick={() => setTab("tests")}>
@@ -275,7 +346,9 @@ export function Exercise({
           </TabButton>
           <TabButton active={tab === "console"} onClick={() => setTab("console")}>
             Konzola
-            {outcome && outcome.logs.length > 0 && <span className="ml-1.5 text-faint tabular-nums">{outcome.logs.length}</span>}
+            {(outcome?.logs ?? previewLogs).length > 0 && (
+              <span className="ml-1.5 text-faint tabular-nums">{(outcome?.logs ?? previewLogs).length}</span>
+            )}
           </TabButton>
           {!outcome && (
             <span className="ml-auto hidden items-center gap-1.5 pr-1 text-[12px] text-faint sm:flex">
@@ -346,26 +419,7 @@ export function Exercise({
               </ul>
             </div>
           ) : (
-            <div className="min-h-16 rounded-lg border border-line bg-code p-3 font-mono text-[12.5px] leading-relaxed">
-              {!outcome || outcome.logs.length === 0 ? (
-                <span className="flex items-center gap-2 text-faint">
-                  <TerminalSquare size={14} /> Ovde se pojavljuje sve što ispišeš sa console.log(...)
-                </span>
-              ) : (
-                outcome.logs.map((l, i) => (
-                  <div
-                    key={i}
-                    className={cn(
-                      "border-b border-line py-0.5 whitespace-pre-wrap last:border-0",
-                      l.level === "error" && "text-danger",
-                      l.level === "warn" && "text-warn",
-                    )}
-                  >
-                    {l.text}
-                  </div>
-                ))
-              )}
-            </div>
+            <ConsoleLines logs={outcome?.logs ?? previewLogs} />
           )}
         </div>
 
@@ -394,7 +448,33 @@ export function Exercise({
           </div>
         )}
       </div>
+      )}
     </section>
+  );
+}
+
+function ConsoleLines({ logs }: { logs: LogLine[] }) {
+  return (
+    <div className="min-h-16 rounded-lg border border-line bg-code p-3 font-mono text-[12.5px] leading-relaxed">
+      {logs.length === 0 ? (
+        <span className="flex items-center gap-2 text-faint">
+          <TerminalSquare size={14} /> Ovde se pojavljuje sve što ispišeš sa console.log(...)
+        </span>
+      ) : (
+        logs.map((l, i) => (
+          <div
+            key={i}
+            className={cn(
+              "border-b border-line py-0.5 whitespace-pre-wrap last:border-0",
+              l.level === "error" && "text-danger",
+              l.level === "warn" && "text-warn",
+            )}
+          >
+            {l.text}
+          </div>
+        ))
+      )}
+    </div>
   );
 }
 

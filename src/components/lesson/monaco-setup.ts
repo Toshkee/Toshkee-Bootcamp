@@ -5,6 +5,23 @@ import type { editor } from "monaco-editor";
 import type { RunResult } from "@/lib/runner/harness";
 
 let configured = false;
+let reactTypes: Promise<void> = Promise.resolve();
+
+/** React tipovi (kopirani u public/ skriptom scripts/copy-react-types.mjs) za autocomplete i proveru u .tsx vežbama. */
+function loadReactTypes(monaco: Monaco) {
+  const files: [string, string][] = [
+    ["/monaco-types/react/index.d.ts", "file:///node_modules/@types/react/index.d.ts"],
+    ["/monaco-types/react/global.d.ts", "file:///node_modules/@types/react/global.d.ts"],
+    ["/monaco-types/react/jsx-runtime.d.ts", "file:///node_modules/@types/react/jsx-runtime.d.ts"],
+    ["/monaco-types/csstype/index.d.ts", "file:///node_modules/csstype/index.d.ts"],
+  ];
+  return Promise.all(
+    files.map(async ([url, path]) => {
+      const res = await fetch(url);
+      if (res.ok) monaco.typescript.typescriptDefaults.addExtraLib(await res.text(), path);
+    }),
+  ).then(() => undefined);
+}
 
 /** Jednom po stranici: TypeScript podešavanja (ista kao u scripts/check-content.ts) i teme. */
 export function configureMonaco(monaco: Monaco) {
@@ -19,9 +36,17 @@ export function configureMonaco(monaco: Monaco) {
     moduleDetection: 3,
     strict: true,
     allowNonTsExtensions: true,
-    // bez `lib`: podrazumevano za ES2022 je es2022 + dom, isto kao u scripts/check-content.ts
+    // isto kao u scripts/check-content.ts; Monaco traži imena fajlova, a ne "es2022"
+    lib: ["lib.es2022.d.ts", "lib.dom.d.ts"],
   };
-  ts.typescriptDefaults.setCompilerOptions(options);
+  ts.typescriptDefaults.setCompilerOptions({
+    ...options,
+    jsx: ts.JsxEmit.ReactJSX,
+    moduleResolution: ts.ModuleResolutionKind.NodeJs,
+    allowSyntheticDefaultImports: true,
+    esModuleInterop: true,
+  });
+  reactTypes = loadReactTypes(monaco).catch(() => undefined);
   ts.javascriptDefaults.setCompilerOptions({ ...options, allowJs: true, checkJs: false });
   ts.typescriptDefaults.setEagerModelSync(true);
   ts.javascriptDefaults.setEagerModelSync(true);
@@ -115,8 +140,9 @@ const flatten = (m: string | MessageChain, indent = 0): string =>
 export async function compileModel(
   monaco: Monaco,
   model: editor.ITextModel,
-  lang: "ts" | "js",
+  lang: "ts" | "js" | "tsx",
 ): Promise<{ js: string; problems: TsProblem[] }> {
+  if (lang === "tsx") await reactTypes;
   const uri = model.uri;
   if (lang === "js") {
     const getWorker = await monaco.typescript.getJavaScriptWorker();

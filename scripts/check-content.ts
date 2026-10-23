@@ -11,8 +11,12 @@
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
 import ts from "typescript";
+import { JSDOM } from "jsdom";
 import type { ExerciseBlock, Module } from "../src/content/types";
 import { buildProgram, type RunResult } from "../src/lib/runner/harness";
+import { evaluateComponent, runReactProgram, type ReactEnv } from "../src/lib/runner/react-harness";
+
+const ROOT = join(import.meta.dirname, "..");
 
 const only = process.argv[2];
 let errors = 0;
@@ -39,9 +43,19 @@ const options: ts.CompilerOptions = {
   outDir: "/out",
 };
 
-function compile(code: string, lang: "ts" | "js") {
-  const fileName = lang === "ts" ? "/main.ts" : "/main.js";
-  const host = ts.createCompilerHost(options);
+const reactOptions: ts.CompilerOptions = {
+  ...options,
+  jsx: ts.JsxEmit.ReactJSX,
+  moduleResolution: ts.ModuleResolutionKind.Bundler,
+  allowSyntheticDefaultImports: true,
+  esModuleInterop: true,
+};
+
+function compile(code: string, lang: "ts" | "js" | "tsx") {
+  // .tsx je "u" projektu, da bi `import ... from "react"` našao tipove u node_modules
+  const fileName = lang === "tsx" ? join(ROOT, "__vezba__.tsx") : lang === "ts" ? "/main.ts" : "/main.js";
+  const opts = lang === "tsx" ? reactOptions : options;
+  const host = ts.createCompilerHost(opts);
   const getSourceFile = host.getSourceFile;
   host.getSourceFile = (name, langVersion, ...rest) =>
     name === fileName
@@ -53,7 +67,7 @@ function compile(code: string, lang: "ts" | "js") {
   host.writeFile = (name, text) => {
     if (name.endsWith(".js")) js = text;
   };
-  const program = ts.createProgram([fileName], options, host);
+  const program = ts.createProgram([fileName], opts, host);
   program.emit();
   const diagnostics = ts
     .getPreEmitDiagnostics(program)
@@ -65,8 +79,34 @@ function compile(code: string, lang: "ts" | "js") {
   return { js, diagnostics };
 }
 
+/** jsdom kao "browser" za React vežbe. React DOM mora da vidi window pre nego što se učita. */
+let reactEnv: Promise<ReactEnv> | undefined;
+const getReactEnv = () =>
+  (reactEnv ??= (async () => {
+    const dom = new JSDOM("<!doctype html><html><body></body></html>", { pretendToBeVisual: true });
+    const g = globalThis as Record<string, unknown>;
+    g.window = dom.window;
+    g.document = dom.window.document;
+    const React = await import("react");
+    const jsxRuntime = await import("react/jsx-runtime");
+    const { createRoot } = await import("react-dom/client");
+    return {
+      React,
+      jsxRuntime,
+      createRoot: createRoot as ReactEnv["createRoot"],
+      doc: dom.window.document,
+      win: dom.window as unknown as ReactEnv["win"],
+    };
+  })());
+
 async function run(ex: ExerciseBlock, code: string): Promise<RunResult & { diagnostics: string[] }> {
   const { js, diagnostics } = compile(code, ex.lang);
+  if (ex.lang === "tsx") {
+    const timeout = new Promise<RunResult>((resolve) =>
+      setTimeout(() => resolve({ logs: [], tests: [], timedOut: true }), 6000),
+    );
+    return { ...(await Promise.race([runReactProgram(await getReactEnv(), js, ex.tests), timeout])), diagnostics };
+  }
   const fn = new Function(buildProgram(js, ex.tests)) as () => Promise<RunResult>;
   const timeout = new Promise<RunResult>((resolve) =>
     setTimeout(() => resolve({ logs: [], tests: [], timedOut: true }), 3000),
@@ -79,7 +119,7 @@ async function run(ex: ExerciseBlock, code: string): Promise<RunResult & { diagn
 }
 
 const passes = (r: RunResult & { diagnostics: string[] }, ex: ExerciseBlock) => {
-  const needNoTypeErrors = ex.requireNoTypeErrors ?? ex.lang === "ts";
+  const needNoTypeErrors = ex.requireNoTypeErrors ?? ex.lang !== "js";
   return (
     !r.timedOut &&
     !r.runtimeError &&
@@ -140,6 +180,19 @@ async function main() {
             }
             const start = await run(block, block.starter);
             if (passes(start, block)) err(at, `STARTER "${block.id}" već prolazi; vežba nema šta da se reši`);
+            break;
+          }
+          case "playground": {
+            claim(block.id, at);
+            const { js, diagnostics } = compile(block.code, "tsx");
+            if (diagnostics.length) err(at, `TS greške u peskovniku: ${diagnostics.join(" | ")}`);
+            const env = await getReactEnv();
+            const out = evaluateComponent(env, js, block.preview ?? "App");
+            if (out.error) err(at, out.error);
+            else {
+              const check = await runReactProgram(env, js, [{ name: "crta se", code: `await render(${block.preview ?? "App"})` }]);
+              if (!check.tests[0]?.pass) err(at, `komponenta ne može da se nacrta: ${check.tests[0]?.error ?? check.runtimeError}`);
+            }
             break;
           }
           case "quiz":

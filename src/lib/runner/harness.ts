@@ -40,6 +40,10 @@ const __fmt = (v, depth = 0) => {
   if (typeof v === "bigint") return v + "n";
   if (typeof v === "symbol") return v.toString();
   if (v === null) return "null";
+  if (typeof v === "object" && v.nodeType === 1 && v.tagName) {
+    const t = (v.textContent || "").replace(/\s+/g, " ").trim();
+    return "<" + v.tagName.toLowerCase() + ">" + (t ? " \"" + (t.length > 60 ? t.slice(0, 60) + "…" : t) + "\"" : "");
+  }
   if (v instanceof Error) return v.name + ": " + v.message;
   if (v instanceof Date) return "Date(" + (isNaN(v.getTime()) ? "Invalid Date" : v.toISOString()) + ")";
   if (v instanceof Map) return "Map(" + v.size + ") {" + [...v].map(([k, x]) => __fmt(k, depth + 1) + " => " + __fmt(x, depth + 1)).join(", ") + "}";

@@ -2,20 +2,11 @@ import type { Lesson, Module, ProjectId, UpcomingModule } from "./types";
 import osnove from "./modules/00-osnove";
 import javascript from "./modules/01-javascript";
 import typescript from "./modules/02-typescript";
+import react from "./modules/03-react";
 
-export const modules: Module[] = [osnove, javascript, typescript];
+export const modules: Module[] = [osnove, javascript, typescript, react];
 
 export const upcoming: UpcomingModule[] = [
-  {
-    slug: "react",
-    index: 3,
-    title: "React",
-    tagline: "Komponente, props, state i hook-ovi",
-    icon: "atom",
-    hue: "#22d3ee",
-    projects: ["ReformStudio", "Looply", "PlazaHome"],
-    topics: ["JSX", "Komponente i props", "useState i useEffect", "Liste i ključevi", "Forme"],
-  },
   {
     slug: "stil-i-stanje",
     index: 4,

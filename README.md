@@ -18,7 +18,7 @@ Pa otvori http://localhost:3000. Napredak (završene lekcije, rešene vežbe, ka
 | `src/content/types.ts` | Format lekcije: tekst, kod, „iz tvog koda", vežbe, kvizovi, terminal |
 | `src/content/curriculum.ts` | Spisak modula, uključujući one koji tek dolaze |
 | `src/components/lesson/` | Blokovi lekcije: Monaco editor, kviz, simulirani terminal, prolazak kroz kod |
-| `src/lib/runner/` | Pokretanje tvog koda u Web Worker-u i testovi (`expect`) |
+| `src/lib/runner/` | Pokretanje tvog koda (Web Worker za JS/TS, iframe sa živim pregledom za React) i testovi (`expect`, `render`, `screen`, `click`…) |
 | `src/lib/progress.ts` | Zustand store sa napretkom |
 | `scripts/check-content.ts` | Proverava da svako rešenje prolazi testove, a da početni kod ne prolazi |
 

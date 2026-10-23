@@ -16,6 +16,8 @@ export function blockAnchor(block: Block, index: number) {
   switch (block.kind) {
     case "exercise":
       return `vezba-${block.id}`;
+    case "playground":
+      return `probaj-${block.id}`;
     case "quiz":
       return `kviz-${block.id}`;
     case "terminal":
@@ -40,6 +42,8 @@ export function buildToc(lesson: Lesson): TocEntry[] {
     } else if (b.kind === "exercise") {
       exercise++;
       out.push({ id: blockAnchor(b, i)!, label: `Vežba ${exercise}: ${plain(b.title)}`, kind: "exercise", exerciseId: b.id });
+    } else if (b.kind === "playground") {
+      out.push({ id: blockAnchor(b, i)!, label: `Probaj: ${plain(b.title)}`, kind: "exercise" });
     } else if (b.kind === "quiz") {
       out.push({ id: blockAnchor(b, i)!, label: plain(b.title ?? "Kviz"), kind: "quiz" });
     } else if (b.kind === "terminal") {
@@ -93,6 +97,7 @@ export async function LessonBlocks({ lesson }: { lesson: Lesson }) {
               number={exerciseNumber}
               title={block.title}
               lang={block.lang}
+              previewName={block.preview}
               starter={block.starter}
               solution={block.solution}
               solutionHtml={await highlightToHtml(block.solution, block.lang)}
@@ -107,6 +112,24 @@ export async function LessonBlocks({ lesson }: { lesson: Lesson }) {
           );
           break;
         }
+        case "playground":
+          node = (
+            <Exercise
+              id={block.id}
+              number={0}
+              mode="playground"
+              title={block.title}
+              lang={block.lang}
+              previewName={block.preview}
+              starter={block.code}
+              solution=""
+              solutionHtml=""
+              tests={[]}
+              prompt={block.prompt ? <Md tight>{block.prompt}</Md> : null}
+              hints={[]}
+            />
+          );
+          break;
         case "quiz":
           node = (
             <Quiz
